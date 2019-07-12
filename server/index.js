@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
-const SequelizeStore = require("connect-session-express")(session.Store);
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const db = require("./db");
 const dbStore = new SequelizeStore({ db: db });
 const passport = require("passport");
 const app = express();
@@ -8,7 +9,6 @@ const models = require("./db/models");
 const path = require("path");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
-const db = require("./db");
 const PORT = process.env.PORT || 3000;
 
 // const createApp = () => {};
