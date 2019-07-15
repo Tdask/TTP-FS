@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import logout from "../store";
+import { logout } from "../store";
 
 class Navbar extends Component {
   componentDidMount() {
@@ -14,7 +14,12 @@ class Navbar extends Component {
         <div>This is the nav bar</div>
         <nav>
           {this.props.isLoggedIn ? (
-            <div>you are logged in!</div>
+            <div>
+              <div>you are logged in!</div>
+              <a href="#" onClick={this.props.handleClick}>
+                Logout
+              </a>
+            </div>
           ) : (
             <div>
               <Link to="/login">Login</Link>

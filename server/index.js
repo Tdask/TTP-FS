@@ -7,11 +7,10 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const db = require("./db");
 const sessionStore = new SequelizeStore({ db });
 const app = express();
-const models = require("./db/models");
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 3000;
 
-//passport registration
+// passport registration
 passport.serializeUser((user, done) => {
   try {
     done(null, user.id);
@@ -22,12 +21,18 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await db.models.user.findById(id);
+    const user = await db.models.user.findByPk(id);
     done(null, user);
   } catch (error) {
     done(error);
   }
 });
+
+// passport.deserializeUser((id, done) => {
+//   User.findByPk(id)
+//     .then(user => done(null, user))
+//     .catch(done);
+// });
 
 const createApp = () => {
   //logging middleware
