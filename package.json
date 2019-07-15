@@ -25,10 +25,12 @@
     "connect-session-sequelize": "^6.0.0",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
+    "history": "^4.9.0",
     "morgan": "^1.9.1",
     "passport": "^0.4.0",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.3",
+    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.1.0",
@@ -44,8 +46,10 @@
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
+    "css-loader": "^3.0.0",
     "nodemon": "^1.19.1",
     "redux-devtools-extension": "^2.13.8",
+    "style-loader": "^0.23.1",
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.5"
   }

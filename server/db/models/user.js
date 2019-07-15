@@ -33,14 +33,6 @@ const User = db.define("user", {
       isAlpha: true
     }
   },
-  userName: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-      isAlpha: true
-    }
-  },
   salt: {
     type: Sequelize.STRING,
     get() {
