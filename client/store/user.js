@@ -22,10 +22,10 @@ export const me = () => async dispatch => {
   }
 };
 
-export const login = values => async dispatch => {
+export const login = (email, password) => async dispatch => {
   let res;
   try {
-    res = await axios.post(`/auth/login`, values);
+    res = await axios.post(`/auth/login`, { email, password });
   } catch (authError) {
     return dispatch(getUser({ error: authError }));
   }
@@ -36,10 +36,21 @@ export const login = values => async dispatch => {
   }
 };
 
-export const signup = values => async dispatch => {
+export const signup = (
+  email,
+  password,
+  firstName,
+  lastName
+) => async dispatch => {
   let res;
   try {
-    res = await axios.post("/auth/signup", values);
+    console.log("inside signup thunk: ", email, password, firstName, lastName);
+    res = await axios.post("/auth/signup", {
+      email,
+      password,
+      firstName,
+      lastName
+    });
   } catch (authError) {
     return dispatch(getUser({ error: authError }));
   }

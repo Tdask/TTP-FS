@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { login, signup } from "../store";
-import unconnectedSignup from "./signup";
+// import UnconnectedSignup from "./signup";
 
 class AuthForm extends Component {
   componentDidMount() {
@@ -10,8 +10,17 @@ class AuthForm extends Component {
   render() {
     return (
       <div>
-        <h2>inside of Login</h2>
-        {/* <Signup /> */}
+        <h2>{this.props.displayName}</h2>
+        <form onSubmit={this.props.handleSubmit} name={this.props.name}>
+          <div>
+            Email:{" "}
+            <input type="text" name="email" placeholder="bob@fakemail.com" />
+            <br />
+            Password: <input type="text" name="password" />
+            <button type="submit">{this.props.displayName}</button>
+          </div>
+        </form>
+        <div />
       </div>
     );
   }
@@ -44,20 +53,12 @@ const mapDispatch = dispatch => {
       const formName = e.target.name;
       const email = e.target.email.value;
       const password = e.target.password.value;
-      formName === "signup"
-        ? dispatch(
-            signup(email, password, e.target.firstName, e.target.lastName)
-          )
-        : dispatch(login(email, password));
+      dispatch(login(email, password));
     }
   };
 };
 
 export const Login = connect(
   mapLogin,
-  mapDispatch
-)(AuthForm);
-export const Signup = connect(
-  mapSignup,
   mapDispatch
 )(AuthForm);
