@@ -10,7 +10,6 @@ import "./index.css";
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
-      <div>'yayayayayay'</div>
       <App />
     </Router>
   </Provider>,

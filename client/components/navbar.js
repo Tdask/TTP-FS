@@ -1,30 +1,47 @@
-import React from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-//still need to make reducers for logout
+import logout from "../store";
 
-const Navbar = ({ handleClick, isLoggedIn }) => (
-  <div>
-    <h1>My Stock Portfolio</h1>
-    <nav>{isLoggedIn ? <div>logged in</div> : <div>is not logged in</div>}</nav>
-  </div>
-);
+class Navbar extends Component {
+  componentDidMount() {
+    console.log("inside of navbar component: ", this.props);
+  }
+  render() {
+    return (
+      <div>
+        <h1>My Stock Portfolio</h1>
+        <div>This is the nav bar</div>
+        <nav>
+          {this.props.isLoggedIn ? (
+            <div>you are logged in!</div>
+          ) : (
+            <div>
+              <Link to="/login">Login</Link>
+              <Link to="/signup">Sign Up</Link>
+            </div>
+          )}
+        </nav>
+      </div>
+    );
+  }
+}
 
-export default Navbar;
-
-//CONTAINER
 const mapState = state => {
   return {
     isLoggedIn: !!state.user.id
   };
 };
 
-// mapDispatch = dispatch => {
-//   return {
-//     handleClick(){
-//       dispatch(logout())
-//     }
-//   }
-// }
+const mapDispatch = dispatch => {
+  return {
+    handleClick() {
+      dispatch(logout());
+    }
+  };
+};
 
-//export default connect(mapState)(Navbar);
+export default connect(
+  mapState,
+  mapDispatch
+)(Navbar);
