@@ -7,7 +7,6 @@ const App = () => {
     <div>
       <Navbar />
       <Routes />
-      <h1>Inside of APP</h1>
     </div>
   );
 };

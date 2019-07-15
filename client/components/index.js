@@ -3,3 +3,4 @@
 export { Login } from "./authForm";
 export { Signup } from "./signup";
 export { default as Navbar } from "./navbar";
+export { default as Home } from "./home";

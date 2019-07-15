@@ -44,7 +44,6 @@ export const signup = (
 ) => async dispatch => {
   let res;
   try {
-    console.log("inside signup thunk: ", email, password, firstName, lastName);
     res = await axios.post("/auth/signup", {
       email,
       password,
