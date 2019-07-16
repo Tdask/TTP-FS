@@ -15,7 +15,7 @@ class UnconnectedSignup extends Component {
           <br />
           Email: <input type="text" name="email" />
           <br />
-          Password: <input type="text" name="password" />
+          Password: <input type="password" name="password" />
           <br />
           <button type="submit">{this.props.displayName}</button>
         </form>

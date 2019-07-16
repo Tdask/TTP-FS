@@ -16,7 +16,7 @@ class AuthForm extends Component {
             Email:{" "}
             <input type="text" name="email" placeholder="bob@fakemail.com" />
             <br />
-            Password: <input type="text" name="password" />
+            Password: <input type="password" name="password" />
             <button type="submit">{this.props.displayName}</button>
           </div>
         </form>

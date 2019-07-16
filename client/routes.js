@@ -11,6 +11,7 @@ class Routes extends Component {
   }
 
   render() {
+    console.log("PROPS inside routes: ", this.props);
     const { isLoggedIn } = this.props;
     return (
       <Switch>
@@ -21,6 +22,7 @@ class Routes extends Component {
             <Route path="/home" component={Home} />
           </Switch>
         )}
+
         <Route component={Login} />
       </Switch>
     );
