@@ -13,7 +13,7 @@ class unconnectedStocks extends Component {
       isLoading: true,
       input: [],
       quote: {},
-      quantity: 5
+      quantity: 1
     };
     // this.getSymbols = this.getSymbols.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -40,11 +40,13 @@ class unconnectedStocks extends Component {
   }
 
   handleIncrement(n) {
-    // const { quantity } = this.state;
+    const quantity = this.state.quantity;
+    const { latestPrice } = this.state.quote;
     const isPos = n > 0;
+    // if (quantity * latestPrice ){}
     if (isPos) {
       this.setState({
-        quantity: this.state.quantity + n
+        quantity: this.state.quantity + 1
       });
     }
     if (!isPos && this.state.quantity > 1) {
@@ -123,10 +125,19 @@ class unconnectedStocks extends Component {
               <div>Price: {latestPrice}</div>
               <span>
                 <button onClick={() => this.handleIncrement(-1)}>-</button>
-                <div> {this.state.quantity}</div>
+                <div> Qnty: {this.state.quantity}</div>
                 <button onClick={() => this.handleIncrement(1)}>+</button>
+                <div>Total: {latestPrice * this.state.quantity}</div>
                 <br />
-                <button>Buy</button>
+                <button
+                  onClick={this.props.handleBuy(
+                    symbol,
+                    latestPrice,
+                    this.state.quantity
+                  )}
+                >
+                  Buy
+                </button>
               </span>
             </div>
           )}
@@ -146,7 +157,7 @@ const mapState = state => {
 const mapDispatch = dispatch => {
   return {
     handleBuy(symbol, price, quantity) {
-      e.preventDefault();
+      // e.preventDefault();
       dispatch(buy(symbol, price, quantity));
     }
   };

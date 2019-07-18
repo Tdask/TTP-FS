@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Transaction = require("../db/models/transaction");
+const { Transaction } = require("../db/models");
 
 //mounted on /api/stock
 router.post("/stock/search", async (req, res, next) => {
@@ -10,10 +10,15 @@ router.post("/stock/search", async (req, res, next) => {
   //...in what syntax do we make our GET request to
 });
 
-router.post("stock/buy", async (req, res, next) => {
-  const transaction = await Transaction.create(req.body);
-  console.log("success");
-  res.json(transaction);
+router.post("/stock/buy", async (req, res, next) => {
+  try {
+    console.log("inside of buy: ", req.body);
+    const transaction = await Transaction.create(req.body);
+    console.log("transaction: ", transaction);
+    // res.json(transaction);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.use(function(req, res, next) {
