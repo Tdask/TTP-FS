@@ -9,7 +9,12 @@ const sessionStore = new SequelizeStore({ db });
 const app = express();
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 3000;
+require("dotenv").config();
+const API_URL = "https://cloud.iexapis.com/";
 
+// if (process.env.NODE_ENV !== "production") require("../secrets");
+
+// process.env.IEX_CLIENT_SECRET;
 // passport registration
 passport.serializeUser((user, done) => {
   try {

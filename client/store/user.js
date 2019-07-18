@@ -1,5 +1,5 @@
 import axios from "axios";
-import { auth } from "../../../../Immersive/Async/boilermaker/client/store";
+// import { auth } from "../../../../Immersive/Async/boilermaker/client/store";
 
 //ACTION TYPES
 const GET_USER = "GET_USER";
