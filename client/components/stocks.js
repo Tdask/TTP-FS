@@ -6,17 +6,19 @@ import * as _fetch from "isomorphic-fetch";
 import { buy } from "../store";
 import axios from "axios";
 
-class Stocks extends Component {
+class unconnectedStocks extends Component {
   constructor() {
     super();
     this.state = {
       isLoading: true,
       input: [],
-      quote: {}
+      quote: {},
+      quantity: 5
     };
     // this.getSymbols = this.getSymbols.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleIncrement = this.handleIncrement.bind(this);
   }
 
   componentDidMount() {
@@ -32,9 +34,40 @@ class Stocks extends Component {
     console.log("handle change called");
     console.log(e.currentTarget.value);
     this.setState({
-      ...this.state,
+      // ...this.state,
       input: e.target.value
     });
+  }
+
+  handleIncrement(n) {
+    // const { quantity } = this.state;
+    const isPos = n > 0;
+    if (isPos) {
+      this.setState({
+        quantity: this.state.quantity + n
+      });
+    }
+    if (!isPos && this.state.quantity > 1) {
+      this.setState({
+        quantity: this.state.quantity - 1
+      });
+    }
+    // else if (this.state.quantity > 1) {
+    //     this.setState({
+    //       quantity: this.state.quantity + n
+    //     });
+    //   }
+    //}
+    // if (n < 0 && this.state.quantity > 1) {
+    //   this.setState({
+    //     quantity: this.state.quantity--
+    //   });
+    // }
+    // if (n > 0) {
+    //   this.setState({
+    //     quantity: this.state.quantity++
+    //   });
+    // }
   }
 
   async handleSubmit(e) {
@@ -50,6 +83,7 @@ class Stocks extends Component {
       const res = await axios.get(URL);
       console.log("res.data: ", res.data);
       this.setState({
+        ticker: this.state.input,
         quote: res.data
       });
       // const stockData = await iex.quote(this.state.input);
@@ -65,7 +99,9 @@ class Stocks extends Component {
   //   // return symbols.map(stock => stock.symbol);
   // }
   render() {
-    console.log("QUOTE: ", this.state.quote);
+    console.log("STATE: ", this.state);
+    const { symbol, latestPrice, companyName } = this.state.quote;
+    // console.log("Props: ", this.props);
     return (
       <div className="outline">
         {/* <div>{symbolsArr && <div> {symbolsArr[3]}</div>}</div> */}
@@ -80,14 +116,30 @@ class Stocks extends Component {
           {/* <input type=" " /> */}
           <button type="submit">Search</button>
         </form>
+        <div>
+          {symbol && (
+            <div>
+              <div>Company:{companyName}</div>
+              <div>Price: {latestPrice}</div>
+              <span>
+                <button onClick={() => this.handleIncrement(-1)}>-</button>
+                <div> {this.state.quantity}</div>
+                <button onClick={() => this.handleIncrement(1)}>+</button>
+                <br />
+                <button>Buy</button>
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 }
 
+//how do we map the user's balance (from User.db) to state, to props? do we have to make a new action inside of user store?
 const mapState = state => {
   return {
-    ...state
+    balance: state.balance
   };
 };
 
@@ -99,5 +151,10 @@ const mapDispatch = dispatch => {
     }
   };
 };
+
+const Stocks = connect(
+  null,
+  mapDispatch
+)(unconnectedStocks);
 
 export default Stocks;
