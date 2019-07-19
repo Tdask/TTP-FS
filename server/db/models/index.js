@@ -5,7 +5,6 @@ const Transaction = require("./transaction");
 User.hasMany(Transaction);
 Transaction.belongsTo(User);
 
-console.log("INSIDE MODELS INDEX, USER: ", User);
 module.exports = {
   User,
   Transaction

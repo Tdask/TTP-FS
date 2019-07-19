@@ -13,7 +13,8 @@ class unconnectedStocks extends Component {
       isLoading: true,
       input: [],
       quote: {},
-      quantity: 1
+      quantity: 1,
+      error: null
     };
     // this.getSymbols = this.getSymbols.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -42,16 +43,26 @@ class unconnectedStocks extends Component {
   handleIncrement(n) {
     const quantity = this.state.quantity;
     const { latestPrice } = this.state.quote;
+    const { balance } = this.props;
     const isPos = n > 0;
     // if (quantity * latestPrice ){}
     if (isPos) {
-      this.setState({
-        quantity: this.state.quantity + 1
-      });
+      if (latestPrice * quantity + latestPrice < balance) {
+        this.setState({
+          quantity: this.state.quantity + 1,
+          error: null
+        });
+      }
+      if (latestPrice * quantity + latestPrice > balance) {
+        this.setState({
+          error: "you do not have enough money"
+        });
+      }
     }
     if (!isPos && this.state.quantity > 1) {
       this.setState({
-        quantity: this.state.quantity - 1
+        quantity: this.state.quantity - 1,
+        error: null
       });
     }
     // else if (this.state.quantity > 1) {
@@ -101,9 +112,9 @@ class unconnectedStocks extends Component {
   //   // return symbols.map(stock => stock.symbol);
   // }
   render() {
-    console.log("STATE: ", this.state);
+    // console.log("STATE: ", this.state);
     const { symbol, latestPrice, companyName } = this.state.quote;
-    // console.log("Props: ", this.props);
+    console.log("PROPSSSS: ", this.props);
     return (
       <div className="outline">
         {/* <div>{symbolsArr && <div> {symbolsArr[3]}</div>}</div> */}
@@ -129,12 +140,16 @@ class unconnectedStocks extends Component {
                 <button onClick={() => this.handleIncrement(1)}>+</button>
                 <div>Total: {latestPrice * this.state.quantity}</div>
                 <br />
+                <div>{this.state.error && <div>{this.state.error}</div>}</div>
                 <button
-                  onClick={this.props.handleBuy(
-                    symbol,
-                    latestPrice,
-                    this.state.quantity
-                  )}
+                  onClick={() =>
+                    this.props.handleBuy(
+                      symbol,
+                      latestPrice,
+                      this.state.quantity,
+                      this.props.userId
+                    )
+                  }
                 >
                   Buy
                 </button>
@@ -150,7 +165,8 @@ class unconnectedStocks extends Component {
 //how do we map the user's balance (from User.db) to state, to props? do we have to make a new action inside of user store?
 const mapState = state => {
   return {
-    balance: state.balance
+    balance: state.user.balance,
+    userId: state.user.id
   };
 };
 
@@ -164,7 +180,7 @@ const mapDispatch = dispatch => {
 };
 
 const Stocks = connect(
-  null,
+  mapState,
   mapDispatch
 )(unconnectedStocks);
 
