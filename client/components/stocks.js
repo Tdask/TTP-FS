@@ -31,6 +31,12 @@ class unconnectedStocks extends Component {
     });
   }
 
+  handleBuy(symbol, latestPrice, quantity) {
+    console.log("made it inside", this.props);
+    this.props.handleBuy(symbol, latestPrice, quantity);
+    this.props.history.push("/transactions");
+  }
+
   handleChange(e) {
     console.log("handle change called");
     console.log(e.currentTarget.value);
@@ -114,7 +120,9 @@ class unconnectedStocks extends Component {
   render() {
     // console.log("STATE: ", this.state);
     const { symbol, latestPrice, companyName } = this.state.quote;
-    console.log("PROPSSSS: ", this.props);
+    const { userId } = this.props;
+    const { quantity } = this.state;
+    // console.log("PROPSSSS: ", this.props);
     return (
       <div className="outline">
         {/* <div>{symbolsArr && <div> {symbolsArr[3]}</div>}</div> */}
@@ -142,14 +150,9 @@ class unconnectedStocks extends Component {
                 <br />
                 <div>{this.state.error && <div>{this.state.error}</div>}</div>
                 <button
-                  onClick={() =>
-                    this.props.handleBuy(
-                      symbol,
-                      latestPrice,
-                      this.state.quantity,
-                      this.props.userId
-                    )
-                  }
+                  onClick={(symbol, latestPrice, quantity) => {
+                    this.handleBuy(...arguments);
+                  }}
                 >
                   Buy
                 </button>

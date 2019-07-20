@@ -18,7 +18,7 @@ class unconnectedTransactions extends Component {
     return (
       <div>
         <h1>My Transactions</h1>
-        {items.map(item => {
+        {items.reverse().map(item => {
           return (
             <div className="outline" key={item.id}>
               <h4>

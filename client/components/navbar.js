@@ -8,7 +8,7 @@ class Navbar extends Component {
   render() {
     return (
       <div>
-        <h5>Stock App</h5>
+        <h3>Stock App</h3>
         {/* <div>This is the nav bar</div> */}
         <nav>
           {this.props.isLoggedIn ? (

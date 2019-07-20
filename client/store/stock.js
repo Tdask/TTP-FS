@@ -10,7 +10,7 @@ const defaultStock = {};
 
 //ACTION CREATORS
 const getStock = symbol => ({ type: GET_STOCK, symbol });
-const buyStock = data => ({ type: BUY_STOCK }, data);
+const buyStock = data => ({ type: BUY_STOCK, data });
 // const getTransactions = userId => ({ type: GET_TRANSACTIONS }, userId);
 
 //THUNKS
@@ -33,10 +33,20 @@ export const buy = (symbol, price, quantity, userId) => async dispatch => {
       quantity,
       userId
     });
-    console.log("buy res: ", res);
-    // dispatch(buy())
+    console.log("buy res: ", res.data);
+    dispatch(buyStock(res.data));
   } catch (error) {
     console.log(error);
+
+    try {
+      res = await axios.put(`/auth/me/${userId}`, {
+        price,
+        quantity
+      });
+      console.log("update res: ", res);
+    } catch (error) {
+      console.log("update error: ", error);
+    }
   }
 };
 

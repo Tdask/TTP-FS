@@ -45,3 +45,12 @@ router.post("/logout", (req, res) => {
 router.get("/me", (req, res) => {
   res.json(req.user);
 });
+
+// put route to update user balance here ? router.put(/'me') ?
+router.put("/me/:userId", async (req, res, next) => {
+  try {
+    console.log("INSIDE PUT: ", req.user);
+  } catch (error) {
+    console.log(error);
+  }
+});

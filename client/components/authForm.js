@@ -4,14 +4,38 @@ import { login, signup } from "../store";
 // import UnconnectedSignup from "./signup";
 
 class AuthForm extends Component {
+  constructor(props) {
+    super(props);
+    // this.state = {
+    //   isLoggedIn = false
+    // }
+    this.handleLogin = this.handleLogin.bind(this);
+  }
   componentDidMount() {
-    console.log("Props inside authform: ", this.props);
+    // console.log("history inside authform: ", history);
+  }
+
+  handleLogin(e) {
+    console.log("INSIDE OF handlLogin: ", this.props);
+    this.props.handleSubmit(e);
+    this.props.history.push("/home");
+    // this.setState({
+    //   isLoggedIn: true
+    // });
   }
   render() {
+    // if(this.state.isLoggedIn){
+    //   return (
+    //     <Redirect to="/home"/>
+    //   )
+    // }
     return (
       <div>
         <h2>{this.props.displayName}</h2>
-        <form onSubmit={this.props.handleSubmit} name={this.props.name}>
+        <form
+          onSubmit={event => this.handleLogin(event)}
+          name={this.props.name}
+        >
           <div>
             Email:{" "}
             <input type="text" name="email" placeholder="bob@fakemail.com" />

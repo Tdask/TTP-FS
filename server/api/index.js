@@ -15,6 +15,10 @@ router.post("/stock/buy", async (req, res, next) => {
     req.body.userId = userId;
     console.log("req.body", req.body);
     const transaction = await Transaction.create(req.body);
+    console.log(
+      "TOTAL: ",
+      transaction.dataValues.price * transaction.dataValues.quantity
+    );
     res.json(transaction);
   } catch (error) {
     console.log(error);
@@ -29,7 +33,7 @@ router.get("/stock/transactions", async (req, res, next) => {
         userId: idToSearch
       }
     });
-    console.log("returned transactions: ", transactions);
+    // console.log("returned transactions: ", transactions);
     //const transactions = //Sequelize query to find all transactions where userId = :userId
     res.json(transactions);
   } catch (error) {
