@@ -47,9 +47,23 @@ router.get("/me", (req, res) => {
 });
 
 // put route to update user balance here ? router.put(/'me') ?
-router.put("/me/:userId", async (req, res, next) => {
+router.put("/me/:id", async (req, res, next) => {
   try {
-    console.log("INSIDE PUT: ", req.user);
+    const userId = req.params.id;
+    const newBalance = Number(Object.keys(req.body));
+    const response = await User.update(
+      {
+        balance: newBalance
+      },
+      {
+        where: {
+          id: userId
+        },
+        returning: true
+      }
+    );
+    const updatedBalance = response[1][0].dataValues.balance;
+    res.json(updatedBalance);
   } catch (error) {
     console.log(error);
   }

@@ -4,6 +4,7 @@ import axios from "axios";
 //ACTION TYPES
 const GET_USER = "GET_USER";
 const REMOVE_USER = "REMOVE_USER";
+const UPDATE_BALANCE = "UPDATE_BALANCE";
 
 //INITIAL STATE
 const defaultUser = {};
@@ -11,6 +12,7 @@ const defaultUser = {};
 //ACTION CREATORS
 const getUser = user => ({ type: GET_USER, user });
 const removeUser = () => ({ type: REMOVE_USER });
+const updated_balance = balance => ({ type: UPDATE_BALANCE, balance });
 
 //THUNK CREATORS
 export const me = () => async dispatch => {
@@ -70,6 +72,17 @@ export const logout = () => async dispatch => {
   }
 };
 
+export const updateBalance = (id, updatedBalance) => async dispatch => {
+  try {
+    const res = await axios.put(`/auth/me/${id}`, updatedBalance);
+    // console.log("THE RETURNED RESPONSE: ", res);
+
+    dispatch(updated_balance(res.data));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 //REDUCER
 export default function(state = defaultUser, action) {
   switch (action.type) {
@@ -77,6 +90,11 @@ export default function(state = defaultUser, action) {
       return action.user;
     case REMOVE_USER:
       return defaultUser;
+    case UPDATE_BALANCE:
+      return {
+        ...state,
+        balance: action.balance
+      };
     default:
       return state;
   }

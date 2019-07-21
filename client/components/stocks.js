@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 // import { IEXClient } from "iex-api";
 import * as _fetch from "isomorphic-fetch";
 // const iex = require("iexcloud_api_wrapper");
-import { buy } from "../store";
+import { buy, updateBalance } from "../store";
 import axios from "axios";
 
 class unconnectedStocks extends Component {
@@ -35,8 +35,10 @@ class unconnectedStocks extends Component {
 
   handleBuy(symbol, latestPrice, quantity) {
     console.log("made it inside: ", symbol, latestPrice, quantity);
+    let newBalance = this.props.balance - latestPrice * quantity;
     this.props.handleBuy(symbol, latestPrice, quantity);
-    this.props.history.push("/transactions");
+    this.props.updateBalance(this.props.userId, newBalance);
+    // this.props.history.push("/transactions");
   }
 
   handleChange(e) {
@@ -172,16 +174,20 @@ class unconnectedStocks extends Component {
 const mapState = state => {
   return {
     balance: state.user.balance,
-    userId: state.user.id
+    userId: state.user.id,
+    user: state.user
   };
 };
 
-const mapDispatch = (dispatch, symbol, price, quantity) => {
+const mapDispatch = dispatch => {
   return {
     handleBuy(symbol, price, quantity) {
       // e.preventDefault();
       console.log("INSIDE DISPATCH: ", symbol, price, quantity);
       dispatch(buy(symbol, price, quantity));
+    },
+    updateBalance(id, updatedBalance) {
+      dispatch(updateBalance(id, updatedBalance));
     }
   };
 };
