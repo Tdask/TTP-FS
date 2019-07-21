@@ -3,6 +3,13 @@ import { connect } from "react-redux";
 import axios from "axios";
 import { userTransactions } from "../store";
 import transaction from "../store/transaction";
+const IEXCLOUD_PUBLIC_KEY = "pk_0b13685b98974e5c9501efc15246a72d";
+const dummySymbols = ["B", "A", "AAPL", "E", "L"];
+dummySymbols[dummySymbols.length - 1] =
+  dummySymbols[dummySymbols.length - 1] + "&";
+const batchURL =
+  process.env.API_URL +
+  `/stable/stock/market/batch?symbols=${dummySymbols.join()}types=quote&token=${IEXCLOUD_PUBLIC_KEY}`;
 
 class unconnectedPortfolio extends Component {
   constructor(props) {
@@ -10,6 +17,7 @@ class unconnectedPortfolio extends Component {
     this.state = {
       portfolio: {}
     };
+    this.handleBatch = this.handleBatch.bind(this);
   }
 
   componentDidMount() {
@@ -33,28 +41,64 @@ class unconnectedPortfolio extends Component {
     this.setState({
       portfolio: portfolio
     });
+    this.handleBatch(portfolio);
+  }
 
-    // portfolio = transactions.map(trans => {
-    //   console.log("trans inside map function: ", trans);
-    // });
-    // console.log("portfolio array: ", portfolio);
+  async handleBatch(portfolio) {
+    console.log("inside of handleBatch", portfolio);
+    const symbolArr = Object.keys(portfolio);
+    symbolArr[symbolArr.length - 1] = symbolArr[symbolArr.length - 1] + "&";
+    console.log("symbolArr: ", symbolArr);
+    const batchURL =
+      process.env.API_URL +
+      `stable/stock/market/batch?symbols=${symbolArr.join()}types=quote&token=${IEXCLOUD_PUBLIC_KEY}`;
+    console.log("batchURL: ", batchURL);
+    const res = await axios.get(batchURL);
+    console.log("Batch Response: ", res.data);
+    this.setState({
+      ...this.state,
+      batchQuotes: res.data
+    });
   }
 
   render() {
     console.log("local state: ", this.state);
     const { portfolio } = this.state;
     const symbolArr = Object.keys(portfolio);
-    console.log(symbolArr);
+    const { batchQuotes } = this.state;
+    // console.log(symbolArr);
+    console.log("batch quotes: ", batchQuotes);
+
     return (
       <div>
-        <h2>My Portfolio</h2>
-        <div>
-          {symbolArr.map(item => (
-            <div key={item}>
-              symbol: {item} quantity: {portfolio[item].quantity}
-            </div>
-          ))}
-        </div>
+        <h1>My Portfolio</h1>
+
+        {/* {symbolArr &&
+          symbolArr.map(item => (
+            <h4 className="outline" key={item}>
+              Stock: {item} <br />
+              Quantity: {portfolio[item].quantity}
+            </h4>
+          ))} */}
+        {batchQuotes ? (
+          <div>
+            {symbolArr.map(item => {
+              return (
+                <h4 className="outline" key={item}>
+                  Stock: {item}
+                  <br />
+                  Quantity : {portfolio[item].quantity} <br />
+                  Current Price: {batchQuotes[item].quote.latestPrice} <br />
+                  Current Value:{" "}
+                  {batchQuotes[item].quote.latestPrice *
+                    portfolio[item].quantity}
+                </h4>
+              );
+            })}
+          </div>
+        ) : (
+          <div>loading up-to-date info..</div>
+        )}
       </div>
     );
   }

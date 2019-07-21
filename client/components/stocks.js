@@ -100,8 +100,9 @@ class unconnectedStocks extends Component {
       const IEXCLOUD_PUBLIC_KEY = "pk_0b13685b98974e5c9501efc15246a72d";
       const URL =
         process.env.API_URL +
-        `/stable/stock/${this.state.input}/quote?token=${IEXCLOUD_PUBLIC_KEY}`;
-      // console.log("URL IS: ", URL);
+        `stable/stock/${this.state.input}/quote?token=${IEXCLOUD_PUBLIC_KEY}`;
+
+      console.log("URL: ", URL);
 
       const res = await axios.get(URL);
       console.log("res.data: ", res.data);

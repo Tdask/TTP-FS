@@ -10,11 +10,11 @@ class unconnectedTransactions extends Component {
 
   componentDidMount() {
     const trans = this.props.getTransactions();
-    console.log("TRANS: ", trans);
   }
 
   render() {
     const items = this.props.transactions.transactions;
+    console.log("ITEMS: ", items);
     return (
       <div>
         <h1>My Transactions</h1>
