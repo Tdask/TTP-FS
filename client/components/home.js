@@ -6,6 +6,7 @@ import Stocks from "./stocks";
 
 const Home = props => {
   const { firstName, balance } = props;
+  console.log("props inside of HOME: ", props);
   return (
     <div>
       <h2>Welcome, {firstName}</h2>
@@ -13,7 +14,7 @@ const Home = props => {
         <h3>Balance: {balance}</h3>
       </div>
       <div>
-        <Stocks />
+        <Stocks history={props.history} />
       </div>
     </div>
   );

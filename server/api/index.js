@@ -11,14 +11,15 @@ router.post("/stock/search", async (req, res, next) => {
 
 router.post("/stock/buy", async (req, res, next) => {
   try {
+    console.log(req.body);
     const userId = req.user.dataValues.id;
     req.body.userId = userId;
     console.log("req.body", req.body);
     const transaction = await Transaction.create(req.body);
-    console.log(
-      "TOTAL: ",
-      transaction.dataValues.price * transaction.dataValues.quantity
-    );
+    // console.log(
+    //   "TOTAL: ",
+    //   transaction.dataValues.price * transaction.dataValues.quantity
+    // );
     res.json(transaction);
   } catch (error) {
     console.log(error);

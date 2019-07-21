@@ -24,29 +24,28 @@ export const search = symbol => async dispatch => {
   }
 };
 
-export const buy = (symbol, price, quantity, userId) => async dispatch => {
+export const buy = (symbol, price, quantity) => async dispatch => {
   let res;
   try {
     res = await axios.post(`/api/stock/buy`, {
       symbol,
       price,
-      quantity,
-      userId
+      quantity
     });
     console.log("buy res: ", res.data);
     dispatch(buyStock(res.data));
   } catch (error) {
     console.log(error);
 
-    try {
-      res = await axios.put(`/auth/me/${userId}`, {
-        price,
-        quantity
-      });
-      console.log("update res: ", res);
-    } catch (error) {
-      console.log("update error: ", error);
-    }
+    // try {
+    //   res = await axios.put(`/auth/me/${userId}`, {
+    //     price,
+    //     quantity
+    //   });
+    //   console.log("update res: ", res);
+    // } catch (error) {
+    //   console.log("update error: ", error);
+    // }
   }
 };
 

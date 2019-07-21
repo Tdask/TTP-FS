@@ -16,7 +16,6 @@ class AuthForm extends Component {
   }
 
   handleLogin(e) {
-    console.log("INSIDE OF handlLogin: ", this.props);
     this.props.handleSubmit(e);
     this.props.history.push("/home");
     // this.setState({

@@ -7,8 +7,8 @@ import { buy } from "../store";
 import axios from "axios";
 
 class unconnectedStocks extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       isLoading: true,
       input: [],
@@ -20,11 +20,13 @@ class unconnectedStocks extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleIncrement = this.handleIncrement.bind(this);
+    this.handleBuy = this.handleBuy.bind(this);
   }
 
   componentDidMount() {
     // const symbolsArr = this.getSymbols();
     // console.log("symbols array: ", symbolsArr);
+    console.log("props iside of STOCKS: ", this.props);
     this.setState({
       isLoading: false
       // symbolsArr
@@ -32,7 +34,7 @@ class unconnectedStocks extends Component {
   }
 
   handleBuy(symbol, latestPrice, quantity) {
-    console.log("made it inside", this.props);
+    console.log("made it inside: ", symbol, latestPrice, quantity);
     this.props.handleBuy(symbol, latestPrice, quantity);
     this.props.history.push("/transactions");
   }
@@ -120,6 +122,7 @@ class unconnectedStocks extends Component {
   render() {
     // console.log("STATE: ", this.state);
     const { symbol, latestPrice, companyName } = this.state.quote;
+    console.log("symbol:", symbol);
     const { userId } = this.props;
     const { quantity } = this.state;
     // console.log("PROPSSSS: ", this.props);
@@ -150,8 +153,8 @@ class unconnectedStocks extends Component {
                 <br />
                 <div>{this.state.error && <div>{this.state.error}</div>}</div>
                 <button
-                  onClick={(symbol, latestPrice, quantity) => {
-                    this.handleBuy(...arguments);
+                  onClick={() => {
+                    this.handleBuy(symbol, latestPrice, quantity);
                   }}
                 >
                   Buy
@@ -173,10 +176,11 @@ const mapState = state => {
   };
 };
 
-const mapDispatch = dispatch => {
+const mapDispatch = (dispatch, symbol, price, quantity) => {
   return {
     handleBuy(symbol, price, quantity) {
       // e.preventDefault();
+      console.log("INSIDE DISPATCH: ", symbol, price, quantity);
       dispatch(buy(symbol, price, quantity));
     }
   };
