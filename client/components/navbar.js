@@ -18,7 +18,8 @@ class Navbar extends Component {
               <a href="#" onClick={this.props.handleClick}>
                 Logout
               </a>{" "}
-              | <Link to="/transactions">Transactions</Link>
+              | <Link to="/transactions">Transactions</Link> |{" "}
+              <Link to="/portfolio">Portfolio</Link>
             </div>
           ) : (
             <div>

@@ -2,16 +2,18 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter, Route, Switch } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Login, Signup, Home, Transactions } from "./components";
+import { Login, Signup, Home, Transactions, Portfolio } from "./components";
 import { me } from "./store";
 
 class Routes extends Component {
+  constructor(props) {
+    super(props);
+  }
   componentDidMount() {
     this.props.loadInitialData();
   }
 
   render() {
-    console.log("PROPS inside routes: ", this.props);
     const { isLoggedIn } = this.props;
     return (
       <Switch>
@@ -21,6 +23,7 @@ class Routes extends Component {
           <Switch>
             <Route path="/home" component={Home} />
             <Route path="/transactions" component={Transactions} />
+            <Route path="/portfolio" component={Portfolio} />
           </Switch>
         )}
 

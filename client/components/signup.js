@@ -3,12 +3,21 @@ import { connect } from "react-redux";
 import { login, signup } from "../store";
 
 class UnconnectedSignup extends Component {
+  constructor(props) {
+    super(props);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(e) {
+    this.props.handleSubmit(e);
+    this.props.history.push("/home");
+  }
   render() {
     console.log("props inside of signup: ", this.props);
     return (
       <div>
         <h2>Inside of Signup</h2>
-        <form onSubmit={this.props.handleSubmit}>
+        <form onSubmit={e => this.handleSubmit(e)}>
           First Name: <input type="text" name="firstName" />
           <br />
           Last Name: <input type="text" name="lastName" />

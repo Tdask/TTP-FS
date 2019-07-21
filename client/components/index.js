@@ -5,3 +5,4 @@ export { Signup } from "./signup";
 export { default as Navbar } from "./navbar";
 export { default as Home } from "./home";
 export { default as Transactions } from "./transactions";
+export { default as Portfolio } from "./portfolio";
