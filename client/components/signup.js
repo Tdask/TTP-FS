@@ -14,22 +14,41 @@ class UnconnectedSignup extends Component {
   }
   render() {
     return (
-      <div className="columns is-centered">
-        <div className="column has-text-centered-is-one-third">
-          <h2 className="title is-4">Signup</h2>
-          <form className="form" onSubmit={e => this.handleSubmit(e)}>
-            First Name: <input type="text" name="firstName" />
-            <br />
-            Last Name: <input type="text" name="lastName" />
-            <br />
-            Email: <input type="text" name="email" />
-            <br />
-            Password: <input type="password" name="password" />
-            <br />
-            <button type="submit">{this.props.displayName}</button>
-          </form>
+      <section className="section">
+        <div className="columns is-centered">
+          <div className="column has-text-centered is-one-third">
+            <h2 className="title is-4">Signup</h2>
+            <form className="form" onSubmit={e => this.handleSubmit(e)}>
+              <div className="field">
+                <div className="control">
+                  First Name:{" "}
+                  <input className="input" type="text" name="firstName" />
+                </div>
+              </div>
+              <div className="field">
+                <div className="control">
+                  Last Name:{" "}
+                  <input className="input" type="text" name="lastName" />
+                </div>
+              </div>
+              <div className="field">
+                <div className="control">
+                  Email: <input className="input" type="text" name="email" />
+                </div>
+              </div>
+              <div className="field">
+                <div className="control">
+                  Password:{" "}
+                  <input className="input" type="password" name="password" />
+                </div>
+              </div>
+              <button className="button" type="submit">
+                {this.props.displayName}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
+      </section>
     );
   }
 }
