@@ -3,6 +3,8 @@ import { connect } from "react-redux";
 import axios from "axios";
 import { userTransactions } from "../store";
 import transaction from "../store/transaction";
+import { calculateTotal } from "../helpers";
+
 const IEXCLOUD_PUBLIC_KEY = "pk_0b13685b98974e5c9501efc15246a72d";
 const dummySymbols = ["B", "A", "AAPL", "E", "L"];
 dummySymbols[dummySymbols.length - 1] =
@@ -15,7 +17,8 @@ class unconnectedPortfolio extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      portfolio: {}
+      portfolio: {},
+      totalValue: null
     };
     this.handleBatch = this.handleBatch.bind(this);
   }
@@ -45,19 +48,20 @@ class unconnectedPortfolio extends Component {
   }
 
   async handleBatch(portfolio) {
-    console.log("inside of handleBatch", portfolio);
     const symbolArr = Object.keys(portfolio);
     symbolArr[symbolArr.length - 1] = symbolArr[symbolArr.length - 1] + "&";
-    console.log("symbolArr: ", symbolArr);
     const batchURL =
       process.env.API_URL +
       `stable/stock/market/batch?symbols=${symbolArr.join()}types=quote&token=${IEXCLOUD_PUBLIC_KEY}`;
-    console.log("batchURL: ", batchURL);
     const res = await axios.get(batchURL);
     console.log("Batch Response: ", res.data);
+    //helper function called here where we send in res.data, which contains latest price, and this.state.portfolio, which contains the quantity of each item. will return back a number value that we can then set to local state's Total Value
+    let result = calculateTotal(res.data, portfolio);
+    console.log("total value result: ", result);
     this.setState({
       ...this.state,
-      batchQuotes: res.data
+      batchQuotes: res.data,
+      totalValue: result
     });
   }
 
@@ -72,7 +76,7 @@ class unconnectedPortfolio extends Component {
     return (
       <div>
         <h1>My Portfolio</h1>
-
+        <h2>Total Value: {this.state.totalValue}</h2>
         {/* {symbolArr &&
           symbolArr.map(item => (
             <h4 className="outline" key={item}>
