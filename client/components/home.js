@@ -8,15 +8,19 @@ const Home = props => {
   const { firstName, balance } = props;
   console.log("props inside of HOME: ", props);
   return (
-    <div>
-      <h2>Welcome, {firstName}</h2>
-      <div>
-        <h3>Balance: {balance}</h3>
+    <section className="section">
+      <div className="columns is-centered">
+        <div className="column has-text-centered is-one-third">
+          <h2 className="title is-2">Welcome, {firstName}</h2>
+          <div className="box">
+            <h3 className="title is-3">Balance: ${balance}</h3>
+          </div>
+          <section className="section">
+            <Stocks history={props.history} />
+          </section>
+        </div>
       </div>
-      <div>
-        <Stocks history={props.history} />
-      </div>
-    </div>
+    </section>
   );
 };
 

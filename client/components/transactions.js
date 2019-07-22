@@ -16,21 +16,25 @@ class unconnectedTransactions extends Component {
     const items = this.props.transactions.transactions;
     console.log("ITEMS: ", items);
     return (
-      <div>
-        <h1>My Transactions</h1>
-        {items.reverse().map(item => {
-          return (
-            <div className="outline" key={item.id}>
-              <h4>
-                Stock: {item.symbol}
-                <br /> Quantity of: {item.quantity}
-                <br /> Price at: {item.price} <br /> Transaction Total:{" "}
-                {item.price * item.quantity} <br /> Date: {item.createdAt}
-              </h4>
-            </div>
-          );
-        })}
-      </div>
+      <section className="section">
+        <div className="columns is-centered">
+          <div className="column has-text-centered is-half">
+            <h1 className="title is-2">My Transactions</h1>
+            {items.reverse().map(item => {
+              return (
+                <div className="outline" key={item.id}>
+                  <h4>
+                    Stock: {item.symbol}
+                    <br /> Quantity of: {item.quantity}
+                    <br /> Price at: {item.price} <br /> Transaction Total:{" "}
+                    {item.price * item.quantity} <br /> Date: {item.createdAt}
+                  </h4>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
     );
   }
 }

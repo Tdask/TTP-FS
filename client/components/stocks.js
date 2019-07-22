@@ -130,41 +130,60 @@ class unconnectedStocks extends Component {
     const { quantity } = this.state;
     // console.log("PROPSSSS: ", this.props);
     return (
-      <div className="outline">
+      <div className=" outline">
         {/* <div>{symbolsArr && <div> {symbolsArr[3]}</div>}</div> */}
-        <form onSubmit={this.handleSubmit}>
-          Stock:{" "}
-          <input
-            type="text"
-            name="ticker"
-            placeholder="ex: AAPL"
-            onChange={e => this.handleChange(e)}
-          />
-          {/* <input type=" " /> */}
-          <button type="submit" className="button">
-            Search
-          </button>
+        <form className="form" onSubmit={this.handleSubmit}>
+          <div className="field">
+            <div className="control">
+              Stock:{" "}
+              <div>
+                <input
+                  className="input"
+                  type="text"
+                  name="ticker"
+                  placeholder="ex: AAPL"
+                  onChange={e => this.handleChange(e)}
+                />
+              </div>
+            </div>
+            <button type="submit" className="button">
+              Search
+            </button>
+          </div>
         </form>
         <div>
           {symbol && (
             <div>
-              <div>Company:{companyName}</div>
-              <div>Price: {latestPrice}</div>
-              <span>
-                <button onClick={() => this.handleIncrement(-1)}>-</button>
-                <div> Qnty: {this.state.quantity}</div>
-                <button onClick={() => this.handleIncrement(1)}>+</button>
-                <div>Total: {latestPrice * this.state.quantity}</div>
-                <br />
-                <div>{this.state.error && <div>{this.state.error}</div>}</div>
-                <button
-                  onClick={() => {
-                    this.handleBuy(symbol, latestPrice, quantity);
-                  }}
-                >
-                  Buy
-                </button>
-              </span>
+              <div className="title is-5">
+                <strong>{companyName}</strong>
+              </div>
+              <div className="title is-6">Price: {latestPrice}</div>
+
+              <div className="title is-6"> Qnty: {this.state.quantity}</div>
+              <button
+                className="button is-rounded"
+                onClick={() => this.handleIncrement(-1)}
+              >
+                -
+              </button>
+              <button
+                className="button is-rounded"
+                onClick={() => this.handleIncrement(1)}
+              >
+                +
+              </button>
+              <div className="title is-5">
+                Total: {latestPrice * this.state.quantity}
+              </div>
+              <div>{this.state.error && <div>{this.state.error}</div>}</div>
+              <button
+                className="button is-success"
+                onClick={() => {
+                  this.handleBuy(symbol, latestPrice, quantity);
+                }}
+              >
+                Buy
+              </button>
             </div>
           )}
         </div>

@@ -74,36 +74,45 @@ class unconnectedPortfolio extends Component {
     console.log("batch quotes: ", batchQuotes);
 
     return (
-      <div>
-        <h1>My Portfolio</h1>
-        <h2>Total Value: {this.state.totalValue}</h2>
-        {/* {symbolArr &&
+      <section className="section">
+        <div className="columns is-centered">
+          <div className="column has-text-centered is-half">
+            <h1 className="title is-2">My Portfolio</h1>
+            <div className="box">
+              <h2 className="title is-3">
+                Total Value: ${this.state.totalValue}
+              </h2>
+            </div>
+            {/* {symbolArr &&
           symbolArr.map(item => (
             <h4 className="outline" key={item}>
               Stock: {item} <br />
               Quantity: {portfolio[item].quantity}
             </h4>
           ))} */}
-        {batchQuotes ? (
-          <div>
-            {symbolArr.map(item => {
-              return (
-                <h4 className="outline" key={item}>
-                  Stock: {item}
-                  <br />
-                  Quantity : {portfolio[item].quantity} <br />
-                  Current Price: {batchQuotes[item].quote.latestPrice} <br />
-                  Current Value:{" "}
-                  {batchQuotes[item].quote.latestPrice *
-                    portfolio[item].quantity}
-                </h4>
-              );
-            })}
+            {batchQuotes ? (
+              <div>
+                {symbolArr.map(item => {
+                  return (
+                    <h4 className="outline" key={item}>
+                      Stock: {item}
+                      <br />
+                      Quantity : {portfolio[item].quantity} <br />
+                      Current Price: {batchQuotes[item].quote.latestPrice}{" "}
+                      <br />
+                      Current Value:{" "}
+                      {batchQuotes[item].quote.latestPrice *
+                        portfolio[item].quantity}
+                    </h4>
+                  );
+                })}
+              </div>
+            ) : (
+              <div>loading up-to-date info..</div>
+            )}
           </div>
-        ) : (
-          <div>loading up-to-date info..</div>
-        )}
-      </div>
+        </div>
+      </section>
     );
   }
 }
