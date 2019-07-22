@@ -13,21 +13,22 @@ class UnconnectedSignup extends Component {
     this.props.history.push("/home");
   }
   render() {
-    console.log("props inside of signup: ", this.props);
     return (
-      <div>
-        <h2>Inside of Signup</h2>
-        <form onSubmit={e => this.handleSubmit(e)}>
-          First Name: <input type="text" name="firstName" />
-          <br />
-          Last Name: <input type="text" name="lastName" />
-          <br />
-          Email: <input type="text" name="email" />
-          <br />
-          Password: <input type="password" name="password" />
-          <br />
-          <button type="submit">{this.props.displayName}</button>
-        </form>
+      <div className="columns is-centered">
+        <div className="column has-text-centered-is-one-third">
+          <h2 className="title is-4">Signup</h2>
+          <form className="form" onSubmit={e => this.handleSubmit(e)}>
+            First Name: <input type="text" name="firstName" />
+            <br />
+            Last Name: <input type="text" name="lastName" />
+            <br />
+            Email: <input type="text" name="email" />
+            <br />
+            Password: <input type="password" name="password" />
+            <br />
+            <button type="submit">{this.props.displayName}</button>
+          </form>
+        </div>
       </div>
     );
   }

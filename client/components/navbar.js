@@ -7,27 +7,32 @@ class Navbar extends Component {
   componentDidMount() {}
   render() {
     return (
-      <div>
-        <h3>Stock App</h3>
-        {/* <div>This is the nav bar</div> */}
-        <nav>
-          {this.props.isLoggedIn ? (
-            <div>
-              <div>you are logged in!</div>
-              <Link to="/home">Home</Link> |{" "}
-              <a href="#" onClick={this.props.handleClick}>
-                Logout
-              </a>{" "}
-              | <Link to="/transactions">Transactions</Link> |{" "}
-              <Link to="/portfolio">Portfolio</Link>
-            </div>
-          ) : (
-            <div>
-              <Link to="/login">Login</Link> | <Link to="/signup">Sign Up</Link>
-            </div>
-          )}
-        </nav>
-      </div>
+      <nav className="navbar" role="navigation" aria-label="main navigation">
+        <h3 className="title is-3">Stock App</h3>
+        {this.props.isLoggedIn ? (
+          <div className="navbar-brand">
+            <Link className="navbar-item" to="/home">
+              Home
+            </Link>{" "}
+            |{" "}
+            <a href="#" onClick={this.props.handleClick}>
+              Logout
+            </a>{" "}
+            | <Link to="/transactions">Transactions</Link> |{" "}
+            <Link to="/portfolio">Portfolio</Link>
+          </div>
+        ) : (
+          <div className="navbar-brand">
+            <Link className="navbar-item" to="/login">
+              <strong>Login</strong>
+            </Link>{" "}
+            |{" "}
+            <Link className="navbar-item" to="/signup">
+              Sign Up
+            </Link>
+          </div>
+        )}
+      </nav>
     );
   }
 }

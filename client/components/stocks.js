@@ -141,7 +141,9 @@ class unconnectedStocks extends Component {
             onChange={e => this.handleChange(e)}
           />
           {/* <input type=" " /> */}
-          <button type="submit">Search</button>
+          <button type="submit" className="button">
+            Search
+          </button>
         </form>
         <div>
           {symbol && (

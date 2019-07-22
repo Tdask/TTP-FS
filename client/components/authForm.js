@@ -29,22 +29,41 @@ class AuthForm extends Component {
     //   )
     // }
     return (
-      <div>
-        <h2>{this.props.displayName}</h2>
-        <form
-          onSubmit={event => this.handleLogin(event)}
-          name={this.props.name}
-        >
-          <div>
-            Email:{" "}
-            <input type="text" name="email" placeholder="bob@fakemail.com" />
-            <br />
-            Password: <input type="password" name="password" />
-            <button type="submit">{this.props.displayName}</button>
+      <section className="section">
+        <div className="columns is-centered">
+          <div className="column has-text-centered is-one-third">
+            <h2 className="title is-4">{this.props.displayName}</h2>
+
+            <form
+              onSubmit={event => this.handleLogin(event)}
+              name={this.props.name}
+              className="form"
+            >
+              <div className="field">
+                <div className="control">
+                  Email:{" "}
+                  <input
+                    className="input"
+                    type="text"
+                    name="email"
+                    placeholder="bob@fakemail.com"
+                  />
+                </div>
+              </div>
+              <br />
+              <div className="field">
+                <div className="control">
+                  Password:{" "}
+                  <input className="input" type="password" name="password" />
+                </div>
+              </div>
+              <button className="button" type="submit">
+                {this.props.displayName}
+              </button>
+            </form>
           </div>
-        </form>
-        <div />
-      </div>
+        </div>
+      </section>
     );
   }
 }
