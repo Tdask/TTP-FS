@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import axios from "axios";
 import { userTransactions } from "../store";
 import transaction from "../store/transaction";
-import { calculateTotal } from "../helpers";
+// import { calculateTotal } from "../helpers";
+import { calculateTotal, decimalCleaner, performance } from "../helpers";
 
 const IEXCLOUD_PUBLIC_KEY = "pk_0b13685b98974e5c9501efc15246a72d";
 const dummySymbols = ["B", "A", "AAPL", "E", "L"];
@@ -56,7 +57,7 @@ class unconnectedPortfolio extends Component {
     const res = await axios.get(batchURL);
     console.log("Batch Response: ", res.data);
     //helper function called here where we send in res.data, which contains latest price, and this.state.portfolio, which contains the quantity of each item. will return back a number value that we can then set to local state's Total Value
-    let result = calculateTotal(res.data, portfolio);
+    let result = decimalCleaner(calculateTotal(res.data, portfolio));
     console.log("total value result: ", result);
     this.setState({
       ...this.state,
@@ -94,16 +95,35 @@ class unconnectedPortfolio extends Component {
               <div>
                 {symbolArr.map(item => {
                   return (
-                    <h4 className="outline" key={item}>
-                      Stock: {item}
-                      <br />
-                      Quantity : {portfolio[item].quantity} <br />
-                      Current Price: {batchQuotes[item].quote.latestPrice}{" "}
-                      <br />
-                      Current Value:{" "}
-                      {batchQuotes[item].quote.latestPrice *
-                        portfolio[item].quantity}
-                    </h4>
+                    <div className="outline" key={item}>
+                      <div
+                        style={performance(
+                          batchQuotes[item].quote.open ||
+                            batchQuotes[item].quote.previousClose,
+                          batchQuotes[item].quote.latestPrice
+                        )}
+                      >
+                        Stock: {item}
+                      </div>
+                      <div
+                        style={performance(
+                          batchQuotes[item].quote.open ||
+                            batchQuotes[item].quote.previousClose,
+                          batchQuotes[item].quote.latestPrice
+                        )}
+                      >
+                        Current Price: {batchQuotes[item].quote.latestPrice}
+                      </div>
+                      <div>Quantity : {portfolio[item].quantity}</div>
+
+                      <div>
+                        Current Value:
+                        {decimalCleaner(
+                          batchQuotes[item].quote.latestPrice *
+                            portfolio[item].quantity
+                        )}
+                      </div>
+                    </div>
                   );
                 })}
               </div>

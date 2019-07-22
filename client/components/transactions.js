@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 import { userTransactions } from "../store";
+import { decimalCleaner } from "../helpers";
 
 class unconnectedTransactions extends Component {
   constructor(props) {
@@ -27,7 +28,8 @@ class unconnectedTransactions extends Component {
                     Stock: {item.symbol}
                     <br /> Quantity of: {item.quantity}
                     <br /> Price at: {item.price} <br /> Transaction Total:{" "}
-                    {item.price * item.quantity} <br /> Date: {item.createdAt}
+                    {decimalCleaner(item.price * item.quantity)} <br /> Date:{" "}
+                    {item.createdAt}
                   </h4>
                 </div>
               );

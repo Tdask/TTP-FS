@@ -8,7 +8,7 @@ class Navbar extends Component {
   render() {
     return (
       <nav className="navbar" role="navigation" aria-label="main navigation">
-        <h3 className="title is-3">Stock App</h3>
+        <h3 className="title yellow">Stock App</h3>
         {this.props.isLoggedIn ? (
           <div>
             <div className="navbar-brand">

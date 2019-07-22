@@ -10,3 +10,24 @@ export const calculateTotal = (batchRes, portfolio) => {
   }
   return totalValue;
 };
+
+export const decimalCleaner = num => {
+  const splitVal = String(num).split(".");
+  while (splitVal[1] && splitVal[1].length < 2) splitVal[1] += "0";
+  if (!splitVal[1]) {
+    splitVal.push("00");
+  }
+  return splitVal[0] + "." + splitVal[1].slice(0, 2);
+};
+
+export const performance = (openPrice, currPrice) => {
+  if (currPrice > openPrice) {
+    return { color: "green" };
+  }
+  if (currPrice === openPrice) {
+    return { color: "grey" };
+  }
+  if (currPrice < openPrice) {
+    return { color: "red" };
+  }
+};

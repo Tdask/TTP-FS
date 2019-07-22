@@ -2,3 +2,7 @@
   outline: 1px solid black;
   padding: 2%;
 }
+
+.yellow {
+  color: rgb(32, 236, 185);
+}

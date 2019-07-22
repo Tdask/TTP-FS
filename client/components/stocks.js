@@ -5,6 +5,7 @@ import * as _fetch from "isomorphic-fetch";
 // const iex = require("iexcloud_api_wrapper");
 import { buy, updateBalance } from "../store";
 import axios from "axios";
+import { decimalCleaner } from "../helpers";
 
 class unconnectedStocks extends Component {
   constructor(props) {
@@ -123,7 +124,7 @@ class unconnectedStocks extends Component {
   //   // return symbols.map(stock => stock.symbol);
   // }
   render() {
-    // console.log("STATE: ", this.state);
+    console.log("STATE: ", this.state);
     const { symbol, latestPrice, companyName } = this.state.quote;
     console.log("symbol:", symbol);
     const { userId } = this.props;
@@ -173,7 +174,7 @@ class unconnectedStocks extends Component {
                 +
               </button>
               <div className="title is-5">
-                Total: {latestPrice * this.state.quantity}
+                Total: {decimalCleaner(latestPrice * this.state.quantity)}
               </div>
               <div>{this.state.error && <div>{this.state.error}</div>}</div>
               <button
