@@ -7,7 +7,6 @@ import { decimalCleaner } from "../helpers";
 
 const Home = props => {
   const { firstName, balance } = props;
-  console.log("props inside of HOME: ", props);
   return (
     <section className="section">
       <div className="columns is-centered">
