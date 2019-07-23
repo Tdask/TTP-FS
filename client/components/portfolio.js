@@ -4,7 +4,12 @@ import axios from "axios";
 import { userTransactions } from "../store";
 import transaction from "../store/transaction";
 // import { calculateTotal } from "../helpers";
-import { calculateTotal, decimalCleaner, performance } from "../helpers";
+import {
+  calculateTotal,
+  decimalCleaner,
+  performance,
+  portfolioMaker
+} from "../helpers";
 
 const IEXCLOUD_PUBLIC_KEY = "pk_0b13685b98974e5c9501efc15246a72d";
 const dummySymbols = ["B", "A", "AAPL", "E", "L"];
@@ -25,30 +30,57 @@ class unconnectedPortfolio extends Component {
   }
 
   componentDidMount() {
+    console.log("component did mount");
     this.props.getTransactions();
-    const transactions = this.props.transactions.transactions;
-    console.log("tranzactions ", transactions);
-    console.log("tranzz is array?", Array.isArray(transactions));
-    const portfolio = {};
-    transactions.forEach(trans => {
-      // console.log("iterated trans: ", trans);
-      if (!portfolio[trans.symbol]) {
-        portfolio[trans.symbol] = { quantity: trans.quantity };
-      } else {
-        const prevQuantity = portfolio[trans.symbol].quantity;
-        portfolio[trans.symbol] = { quantity: prevQuantity + trans.quantity };
-      }
-    });
 
-    console.log("PORTFOLIO after iteration: ", portfolio);
+    // console.log("props immediately after calling getTransactions", this.props);
+    // const transactions = this.props.transactions.transactions;
+    // console.log("tranzactions ", transactions);
+    // // console.log("tranzz is array?", Array.isArray(transactions));
+    // const portfolio = {};
+    // transactions.forEach(trans => {
+    //   // console.log("iterated trans: ", trans);
+    //   if (!portfolio[trans.symbol]) {
+    //     portfolio[trans.symbol] = { quantity: trans.quantity };
+    //   } else {
+    //     const prevQuantity = portfolio[trans.symbol].quantity;
+    //     portfolio[trans.symbol] = { quantity: prevQuantity + trans.quantity };
+    //   }
+    // });
 
-    this.setState({
-      portfolio: portfolio
-    });
-    this.handleBatch(portfolio);
+    // console.log("PORTFOLIO after iteration: ", portfolio);
+
+    // this.setState({
+    //   portfolio: portfolio
+    // });
+    // this.handleBatch(portfolio);
+
+    // this.interval = setInterval(() => {
+    //   console.log("interval triggered");
+    //   this.handleBatch(portfolio);
+    // }, 60000);
+  }
+
+  componentDidUpdate() {
+    console.log("componendDidUpdate props: ", this.props);
+    console.log("componendDidUpdate local state: ", this.state);
+    //if there is no this.state.portfolio, call portfolio helper function to make one (dont set to state just yet)
+    let portfolio;
+    if (Object.keys(this.state.portfolio).length === 0) {
+      console.log("there is no portfolio on state");
+      portfolio = portfolioMaker(this.props.transactions.transactions);
+    }
+    //if no this.state.batchQuotes, make initial batch call to iex to get batchquotes (dont set to state yet)
+    if (!this.state.batchQuotes) {
+      console.log("no batchQuote condition triggered");
+      this.handleBatch(portfolio);
+    }
+
+    //if no this.interval then create one that calls this.handleBatch every 60 seconds, passing in portfolio...need to make sure portfolio is updating here within this logic...maybe save a prevPortfolio and compare
   }
 
   async handleBatch(portfolio) {
+    console.log("inside of handleBatch", portfolio);
     const symbolArr = Object.keys(portfolio);
     symbolArr[symbolArr.length - 1] = symbolArr[symbolArr.length - 1] + "&";
     const batchURL =
@@ -60,19 +92,34 @@ class unconnectedPortfolio extends Component {
     let result = decimalCleaner(calculateTotal(res.data, portfolio));
     console.log("total value result: ", result);
     this.setState({
-      ...this.state,
+      portfolio,
       batchQuotes: res.data,
       totalValue: result
     });
+
+    console.log("state immediately after being set in handleBatch", this.state);
+
+    if (!this.interval) {
+      this.interval = setInterval(() => {
+        console.log("interval");
+        this.handleBatch(this.state.portfolio);
+      }, 60000);
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   render() {
-    console.log("local state: ", this.state);
+    console.log("render props", this.props);
+    console.log("render local state", this.state);
+    const transactions = this.props.transactions.transactions;
     const { portfolio } = this.state;
     const symbolArr = Object.keys(portfolio);
     const { batchQuotes } = this.state;
     // console.log(symbolArr);
-    console.log("batch quotes: ", batchQuotes);
+    // console.log("batch quotes: ", batchQuotes);
 
     return (
       <section className="section">

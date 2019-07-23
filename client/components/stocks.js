@@ -15,6 +15,7 @@ class unconnectedStocks extends Component {
       input: [],
       quote: {},
       quantity: 1,
+      isEmpty: true,
       error: null
     };
     // this.getSymbols = this.getSymbols.bind(this);
@@ -39,6 +40,9 @@ class unconnectedStocks extends Component {
     let newBalance = this.props.balance - latestPrice * quantity;
     this.props.handleBuy(symbol, latestPrice, quantity);
     this.props.updateBalance(this.props.userId, newBalance);
+    this.setState({
+      input: []
+    });
     // this.props.history.push("/transactions");
   }
 
@@ -49,6 +53,19 @@ class unconnectedStocks extends Component {
       // ...this.state,
       input: e.target.value
     });
+    console.log("after updating input: ", this.state.input.length);
+    if (this.state.input.length > 1) {
+      this.setState({
+        isEmpty: false
+      });
+    }
+    console.log("after checking length");
+    if (this.state.input.length === 0) {
+      this.setState({
+        isEmpty: true
+      });
+    }
+    console.log("after checking empty");
   }
 
   handleIncrement(n) {
@@ -126,9 +143,9 @@ class unconnectedStocks extends Component {
   render() {
     console.log("STATE: ", this.state);
     const { symbol, latestPrice, companyName } = this.state.quote;
-    console.log("symbol:", symbol);
+    // console.log("symbol:", symbol);
     const { userId } = this.props;
-    const { quantity } = this.state;
+    const { quantity, isEmpty } = this.state;
     // console.log("PROPSSSS: ", this.props);
     return (
       <div className=" outline">
@@ -153,7 +170,7 @@ class unconnectedStocks extends Component {
           </div>
         </form>
         <div>
-          {symbol && (
+          {symbol && !isEmpty && (
             <div>
               <div className="title is-5">
                 <strong>{companyName}</strong>

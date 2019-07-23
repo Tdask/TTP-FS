@@ -31,3 +31,20 @@ export const performance = (openPrice, currPrice) => {
     return { color: "red" };
   }
 };
+
+export const portfolioMaker = transactions => {
+  console.log("inside of portfoliomaker helper", transactions);
+
+  const portfolio = {};
+  transactions.forEach(trans => {
+    // console.log("iterated trans: ", trans);
+    if (!portfolio[trans.symbol]) {
+      portfolio[trans.symbol] = { quantity: trans.quantity };
+    } else {
+      const prevQuantity = portfolio[trans.symbol].quantity;
+      portfolio[trans.symbol] = { quantity: prevQuantity + trans.quantity };
+    }
+  });
+
+  return portfolio;
+};
