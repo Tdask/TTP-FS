@@ -19,6 +19,7 @@ class unconnectedStocks extends Component {
       searchStock: null,
       boughtStock: null,
       isSearching: true,
+      suggestions: [],
       error: null
     };
     // this.getSymbols = this.getSymbols.bind(this);
@@ -26,6 +27,8 @@ class unconnectedStocks extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleIncrement = this.handleIncrement.bind(this);
     this.handleBuy = this.handleBuy.bind(this);
+    this.renderSuggestions = this.renderSuggestions.bind(this);
+    this.selectSuggestion = this.selectSuggestion.bind(this);
   }
 
   componentDidMount() {
@@ -103,25 +106,19 @@ class unconnectedStocks extends Component {
   }
 
   handleChange(e) {
-    console.log("handle change called");
-    console.log(e.currentTarget.value);
+    // console.log("handle change called");
+    const input = e.target.value;
+    let suggestions = [];
+    if (input.length > 0) {
+      const regex = new RegExp(`^${input}`, "i");
+      suggestions = this.props.allSymbols.filter(item =>
+        regex.test(item.symbol)
+      );
+    }
     this.setState({
-      // ...this.state,
-      input: e.target.value
+      input,
+      suggestions
     });
-    // console.log("after updating input: ", this.state.input);
-    // if (this.state.input.length > 1) {
-    //   this.setState({
-    //     isEmpty: false
-    //   });
-    // }
-    // console.log("after checking length");
-    // if (this.state.input.length === 0) {
-    //   this.setState({
-    //     isEmpty: true
-    //   });
-    // }
-    // console.log("after checking empty");
   }
 
   handleIncrement(n) {
@@ -179,6 +176,29 @@ class unconnectedStocks extends Component {
   //   // const symbols = await iex.symbols();
   //   // return symbols.map(stock => stock.symbol);
   // }
+
+  renderSuggestions() {
+    const { suggestions } = this.state;
+    return (
+      suggestions && (
+        <ul>
+          {suggestions.map((item, i) => (
+            <li key={i} onClick={() => this.selectSuggestion(item)}>
+              {item.symbol}
+            </li>
+          ))}
+        </ul>
+      )
+    );
+  }
+
+  selectSuggestion(item) {
+    this.setState({
+      input: item.symbol,
+      suggestions: []
+    });
+  }
+
   render() {
     console.log("render local state ", this.state);
     console.log("render props ", this.props);
@@ -203,9 +223,12 @@ class unconnectedStocks extends Component {
                     placeholder="ex: AAPL"
                     onChange={e => this.handleChange(e)}
                     value={this.state.input}
+                    autoComplete="off"
                   />
+                  {this.renderSuggestions()}
                 </div>
               </div>
+
               <button type="submit" className="button">
                 Search
               </button>
@@ -266,7 +289,8 @@ const mapState = state => {
   return {
     balance: state.user.balance,
     userId: state.user.id,
-    user: state.user
+    user: state.user,
+    allSymbols: state.stock.symbols
   };
 };
 
