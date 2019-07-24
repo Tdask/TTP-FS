@@ -20,6 +20,7 @@ class unconnectedStocks extends Component {
       boughtStock: null,
       isSearching: true,
       suggestions: [],
+      activeSuggestion: 0,
       error: null
     };
     // this.getSymbols = this.getSymbols.bind(this);
@@ -29,29 +30,16 @@ class unconnectedStocks extends Component {
     this.handleBuy = this.handleBuy.bind(this);
     this.renderSuggestions = this.renderSuggestions.bind(this);
     this.selectSuggestion = this.selectSuggestion.bind(this);
+    // this.handleKey = this.handleKey.bind(this);
   }
 
   componentDidMount() {
-    // const symbolsArr = this.getSymbols();
-    // console.log("symbols array: ", symbolsArr);
-    console.log("component did mount props: ", this.props);
-    console.log(
-      "component did mount state before setting loading to false: ",
-      this.state
-    );
-
     this.setState({
       isLoading: false
-      // symbolsArr
     });
   }
 
   componentDidUpdate() {
-    console.log("component did update props", this.props);
-    console.log("component did update state", this.state);
-    // console.log("input", this.state.input);
-
-    console.log(this.state.isEmpty);
     if (this.state.input.length > 0) {
       // console.log("INSIDE of input not empty conditional");
       if (this.state.isEmpty) {
@@ -86,12 +74,9 @@ class unconnectedStocks extends Component {
         searchStock: null
       });
     }
-
-    console.log("state at the end of component did update", this.state);
   }
 
   handleBuy(symbol, latestPrice, quantity) {
-    console.log("made it inside: ", symbol, latestPrice, quantity);
     let newBalance = this.props.balance - latestPrice * quantity;
     this.props.handleBuy(symbol, latestPrice, quantity);
     this.props.updateBalance(this.props.userId, newBalance);
@@ -101,7 +86,7 @@ class unconnectedStocks extends Component {
       boughtStock: symbol,
       isSearching: true
     });
-    console.log("state right after handleBuy setState", this.state);
+
     // this.props.history.push("/transactions");
   }
 
@@ -120,6 +105,33 @@ class unconnectedStocks extends Component {
       suggestions
     });
   }
+
+  // handleKey(e) {
+  //   console.log("key code", e.keyCode);
+
+  //   //if enter key is pressed
+  //   if (e.keyCode === 13) {
+  //     this.handleSubmit(e);
+  //   }
+  //   //if UP is pressed
+  //   if (e.keyCode === 38) {
+  //     if (this.state.activeSuggestion === 0) {
+  //       return;
+  //     }
+  //     this.setState({
+  //       activeSuggestion: this.state.activeSuggestion - 1
+  //     });
+  //   }
+  //   //if DOWN is pressed
+  //   if (e.keyCode === 40) {
+  //     if (this.state.activeSuggestion - 1 === this.state.suggestions.length) {
+  //       return;
+  //     }
+  //     this.setState({
+  //       activeSuggestion: this.state.activeSuggestion + 1
+  //     });
+  //   }
+  // }
 
   handleIncrement(n) {
     const quantity = this.state.quantity;
@@ -151,18 +163,17 @@ class unconnectedStocks extends Component {
   async handleSubmit(e) {
     try {
       e.preventDefault();
-      console.log(this.state.input);
       const IEXCLOUD_PUBLIC_KEY = "pk_0b13685b98974e5c9501efc15246a72d";
       const URL =
         process.env.API_URL +
         `stable/stock/${this.state.input}/quote?token=${IEXCLOUD_PUBLIC_KEY}`;
       const res = await axios.get(URL);
-      console.log("res.data: ", res.data);
       this.setState({
         searchStock: this.state.input,
         quote: res.data,
         boughtStock: null,
-        isSearching: true
+        isSearching: true,
+        suggestions: []
       });
       // const stockData = await iex.quote(this.state.input);
       // console.log("stockData: ", stockData);
@@ -181,12 +192,23 @@ class unconnectedStocks extends Component {
     const { suggestions } = this.state;
     return (
       suggestions && (
-        <ul>
-          {suggestions.map((item, i) => (
-            <li key={i} onClick={() => this.selectSuggestion(item)}>
-              {item.symbol}
-            </li>
-          ))}
+        <ul className="suggestions">
+          {suggestions.map((item, i) => {
+            let className = "suggestion";
+            if (i === this.state.activeSuggestion) {
+              className = "suggestion-active";
+            }
+
+            return (
+              <li
+                className={className}
+                key={i}
+                onClick={() => this.selectSuggestion(item)}
+              >
+                {item.symbol} - {item.name}
+              </li>
+            );
+          })}
         </ul>
       )
     );
@@ -200,8 +222,6 @@ class unconnectedStocks extends Component {
   }
 
   render() {
-    console.log("render local state ", this.state);
-    console.log("render props ", this.props);
     const { symbol, latestPrice, companyName } = this.state.quote;
     // console.log("symbol:", symbol);
     const { userId } = this.props;
@@ -222,6 +242,7 @@ class unconnectedStocks extends Component {
                     name="ticker"
                     placeholder="ex: AAPL"
                     onChange={e => this.handleChange(e)}
+                    // onKeyDown={e => this.handleKey(e)}
                     value={this.state.input}
                     autoComplete="off"
                   />

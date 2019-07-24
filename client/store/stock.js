@@ -49,7 +49,7 @@ export const getSymbols = () => async dispatch => {
   try {
     const URL =
       process.env.API_URL +
-      `stable/ref-data/iex/symbols?token=${IEXCLOUD_PUBLIC_KEY}`;
+      `stable/ref-data/symbols?token=${IEXCLOUD_PUBLIC_KEY}`;
     res = await axios.get(URL);
     dispatch(gotSymbols(res.data));
   } catch (error) {}
