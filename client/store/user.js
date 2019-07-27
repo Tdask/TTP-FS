@@ -87,6 +87,7 @@ export const updateBalance = (id, updatedBalance) => async dispatch => {
 export default function(state = defaultUser, action) {
   switch (action.type) {
     case GET_USER:
+      console.log("GET USER REDUCER", action.user);
       return action.user;
     case REMOVE_USER:
       return defaultUser;

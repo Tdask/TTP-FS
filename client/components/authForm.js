@@ -15,6 +15,9 @@ class AuthForm extends Component {
     // console.log("history inside authform: ", history);
   }
 
+  componentDidUpdate() {
+    console.log("props inside of component did update: ", this.props);
+  }
   handleLogin(e) {
     this.props.handleSubmit(e);
     this.props.history.push("/home");
@@ -28,6 +31,7 @@ class AuthForm extends Component {
     //     <Redirect to="/home"/>
     //   )
     // }
+    console.log("PROPS INSIDE AUTHFORM RENDER", this.props);
     return (
       <section className="section">
         <div className="columns is-centered">
@@ -57,6 +61,11 @@ class AuthForm extends Component {
                   <input className="input" type="password" name="password" />
                 </div>
               </div>
+              <div>
+                {this.props.error && (
+                  <div> {this.props.error.response.data}</div>
+                )}
+              </div>
               <button className="button" type="submit">
                 {this.props.displayName}
               </button>
@@ -72,7 +81,7 @@ const mapLogin = state => {
   return {
     name: "login",
     displayName: "Login",
-    error: state.user.errror
+    error: state.user.error
   };
 };
 
