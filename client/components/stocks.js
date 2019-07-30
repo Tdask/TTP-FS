@@ -76,9 +76,9 @@ class unconnectedStocks extends Component {
     }
   }
 
-  handleBuy(symbol, latestPrice, quantity) {
+  handleBuy(symbol, companyName, latestPrice, quantity) {
     let newBalance = this.props.balance - latestPrice * quantity;
-    this.props.handleBuy(symbol, latestPrice, quantity);
+    this.props.handleBuy(symbol, companyName, latestPrice, quantity);
     this.props.updateBalance(this.props.userId, newBalance);
     this.setState({
       input: [],
@@ -223,18 +223,22 @@ class unconnectedStocks extends Component {
 
   render() {
     const { symbol, latestPrice, companyName } = this.state.quote;
+    // console.log("COMPANY NAME: ", companyName);
+    console.log("STOCKS props: ", this.props);
+    console.log("STOCKS local state: ", this.state);
+
     // console.log("symbol:", symbol);
     const { userId } = this.props;
     const { quantity, isEmpty } = this.state;
     // console.log("PROPSSSS: ", this.props);
     return (
       <div>
-        <div className=" outline">
+        <div className="box card">
           {/* <div>{symbolsArr && <div> {symbolsArr[3]}</div>}</div> */}
           <form className="form" onSubmit={this.handleSubmit}>
             <div className="field">
               <div className="control">
-                Stock:{" "}
+                Search by ticker symbol:{" "}
                 <div>
                   <input
                     className="input"
@@ -283,7 +287,7 @@ class unconnectedStocks extends Component {
                 <button
                   className="button is-success"
                   onClick={() => {
-                    this.handleBuy(symbol, latestPrice, quantity);
+                    this.handleBuy(symbol, companyName, latestPrice, quantity);
                   }}
                 >
                   Buy
@@ -294,10 +298,12 @@ class unconnectedStocks extends Component {
         </div>
         <div>
           {this.state.boughtStock && (
-            <div>
-              you bought {this.state.quantity} shares of{" "}
-              {this.state.boughtStock}{" "}
-            </div>
+            <section className="section">
+              <div className="title is-4">
+                you bought {this.state.quantity} shares of{" "}
+                {this.state.boughtStock}{" "}
+              </div>
+            </section>
           )}
         </div>
       </div>
@@ -317,10 +323,10 @@ const mapState = state => {
 
 const mapDispatch = dispatch => {
   return {
-    handleBuy(symbol, price, quantity) {
+    handleBuy(symbol, companyName, price, quantity) {
       // e.preventDefault();
-      console.log("INSIDE DISPATCH: ", symbol, price, quantity);
-      dispatch(buy(symbol, price, quantity));
+
+      dispatch(buy(symbol, companyName, price, quantity));
     },
     updateBalance(id, updatedBalance) {
       dispatch(updateBalance(id, updatedBalance));

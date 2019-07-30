@@ -48,7 +48,7 @@ class AuthForm extends Component {
                   Email:{" "}
                   <input
                     className="input"
-                    type="text"
+                    type="email"
                     name="email"
                     placeholder="bob@fakemail.com"
                   />

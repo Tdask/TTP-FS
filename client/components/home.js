@@ -27,7 +27,7 @@ class Home extends Component {
     return (
       <section className="section">
         <div className="columns is-centered">
-          <div className="column has-text-centered is-one-third">
+          <div className="column has-text-centered is-full">
             <h2 className="title is-2">Welcome, {firstName}</h2>
             <div className="box">
               <h3 className="title is-3">

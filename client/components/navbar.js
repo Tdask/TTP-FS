@@ -25,8 +25,10 @@ class Navbar extends Component {
           <a className="navbar-item">
             <img src="https://images.emojiterra.com/google/android-oreo/512px/1f4b9.png" />
           </a>
-          <h3 className="navbar-item title yellow">Stock App</h3>
-          {this.props.isLoggedIn ? (
+
+          <h3 className="title  yellow">Stock App</h3>
+
+          {this.props.isLoggedIn && (
             <a
               className="navbar-item"
               href="#"
@@ -34,15 +36,6 @@ class Navbar extends Component {
             >
               Logout
             </a>
-          ) : (
-            <div className="navbar-item">
-              <Link className="navbar-item" to="/login">
-                <strong>Login</strong>
-              </Link>
-              <Link className="navbar-item" to="/signup">
-                Sign Up
-              </Link>
-            </div>
           )}
           <a
             onClick={this.toggleMenu}
@@ -61,7 +54,7 @@ class Navbar extends Component {
         </div>
         <div className={`navbar-menu ${this.state.menu ? "is-active" : ""}`}>
           <div className="navbar-end">
-            {this.props.isLoggedIn && (
+            {this.props.isLoggedIn ? (
               <div className="navbar-item">
                 <Link className="navbar-item" to="/home">
                   Home
@@ -72,6 +65,15 @@ class Navbar extends Component {
                 </Link>
                 <Link className="navbar-item" to="/portfolio">
                   Portfolio
+                </Link>
+              </div>
+            ) : (
+              <div className="navbar-item">
+                <Link className="navbar-item" to="/login">
+                  <strong>Login</strong>
+                </Link>
+                <Link className="navbar-item" to="/signup">
+                  Sign Up
                 </Link>
               </div>
             )}

@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
-import { userTransactions } from "../store";
+import { userTransactions, getSymbols } from "../store";
 import transaction from "../store/transaction";
 // import { calculateTotal } from "../helpers";
+import Stocks from "./stocks";
+import Home from "./home";
+
 import {
   calculateTotal,
   decimalCleaner,
@@ -32,6 +35,11 @@ class unconnectedPortfolio extends Component {
   componentDidMount() {
     console.log("component did mount");
     this.props.getTransactions();
+    // if (!this.props.allSymbols) {
+    //   console.log("WE HAVE TO GET ALL THE SYMBOLS!!!!!!!!!");
+
+    //   this.props.getSymbols();
+    // }
 
     // console.log("props immediately after calling getTransactions", this.props);
     // const transactions = this.props.transactions.transactions;
@@ -80,7 +88,7 @@ class unconnectedPortfolio extends Component {
   }
 
   async handleBatch(portfolio) {
-    console.log("inside of handleBatch", portfolio);
+    // console.log("inside of handleBatch", portfolio);
     const symbolArr = Object.keys(portfolio);
     symbolArr[symbolArr.length - 1] = symbolArr[symbolArr.length - 1] + "&";
     const batchURL =
@@ -90,7 +98,7 @@ class unconnectedPortfolio extends Component {
     console.log("Batch Response: ", res.data);
     //helper function called here where we send in res.data, which contains latest price, and this.state.portfolio, which contains the quantity of each item. will return back a number value that we can then set to local state's Total Value
     let result = decimalCleaner(calculateTotal(res.data, portfolio));
-    console.log("total value result: ", result);
+    // console.log("total value result: ", result);
     this.setState({
       portfolio,
       batchQuotes: res.data,
@@ -99,34 +107,33 @@ class unconnectedPortfolio extends Component {
 
     console.log("state immediately after being set in handleBatch", this.state);
 
-    if (!this.interval) {
-      this.interval = setInterval(() => {
-        console.log("interval");
-        this.handleBatch(this.state.portfolio);
-      }, 60000);
-    }
+    // if (!this.interval) {
+    //   this.interval = setInterval(() => {
+    //     // console.log("interval");
+    //     this.handleBatch(this.state.portfolio);
+    //   }, 60000);
+    // }
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    // clearInterval(this.interval);
   }
 
   render() {
-    console.log("render props", this.props);
-    console.log("render local state", this.state);
+    console.log("PORTFOLIO props", this.props);
+    console.log("PORTFOLIO local state", this.state);
     const transactions = this.props.transactions.transactions;
     const { portfolio } = this.state;
     const symbolArr = Object.keys(portfolio);
     const { batchQuotes } = this.state;
-    // console.log(symbolArr);
-    // console.log("batch quotes: ", batchQuotes);
+    // console.log("BATCHQUOTES ", batchQuotes);
 
     return (
-      <section className="section">
-        <div className="columns is-centered">
-          <div className="column has-text-centered is-half">
-            <h1 className="title is-2">My Portfolio</h1>
-            <div className="box">
+      <div>
+        <div className="columns level">
+          <div className=" column level-left stick has-text-centered is-half">
+            <h1 className="level- item title is-2">My Portfolio</h1>
+            <div className="level-item box">
               <h2 className="title is-3">
                 Total Value: ${this.state.totalValue}
               </h2>
@@ -139,47 +146,63 @@ class unconnectedPortfolio extends Component {
             </h4>
           ))} */}
             {batchQuotes ? (
-              <div>
-                {symbolArr.map(item => {
-                  return (
-                    <div className="outline" key={item}>
-                      <div
-                        style={performance(
-                          batchQuotes[item].quote.open ||
-                            batchQuotes[item].quote.previousClose,
-                          batchQuotes[item].quote.latestPrice
-                        )}
-                      >
-                        Stock: {item}
-                      </div>
-                      <div
-                        style={performance(
-                          batchQuotes[item].quote.open ||
-                            batchQuotes[item].quote.previousClose,
-                          batchQuotes[item].quote.latestPrice
-                        )}
-                      >
-                        Current Price: {batchQuotes[item].quote.latestPrice}
-                      </div>
-                      <div>Quantity : {portfolio[item].quantity}</div>
+              <ul>
+                <div>
+                  {symbolArr.map(item => {
+                    return (
+                      <div className="box card" key={item}>
+                        <div
+                          className="title is-5"
+                          style={
+                            performance(
+                              batchQuotes[item].quote.open ||
+                                batchQuotes[item].quote.previousClose,
+                              batchQuotes[item].quote.latestPrice
+                            )[0]
+                          }
+                        >
+                          <strong>
+                            Symbol: {item} Current Price:{" "}
+                            {batchQuotes[item].quote.latestPrice}
+                          </strong>
+                          <img
+                            src={
+                              performance(
+                                batchQuotes[item].quote.open ||
+                                  batchQuotes[item].quote.previousClose,
+                                batchQuotes[item].quote.latestPrice
+                              )[1].img
+                            }
+                            width="30"
+                            height="30"
+                          />
+                        </div>
+                        <div>
+                          <strong>{batchQuotes[item].quote.companyName}</strong>
+                        </div>
+                        <div>Quantity : {portfolio[item].quantity}</div>
 
-                      <div>
-                        Current Value:
-                        {decimalCleaner(
-                          batchQuotes[item].quote.latestPrice *
-                            portfolio[item].quantity
-                        )}
+                        <div>
+                          Current Value:{" "}
+                          {decimalCleaner(
+                            batchQuotes[item].quote.latestPrice *
+                              portfolio[item].quantity
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              </ul>
             ) : (
               <div>loading up-to-date info..</div>
             )}
           </div>
+          <div className="column level-right is-half">
+            <Home />
+          </div>
         </div>
-      </section>
+      </div>
     );
   }
 }
@@ -194,6 +217,9 @@ const mapDispatch = dispatch => {
   return {
     getTransactions() {
       dispatch(userTransactions());
+    },
+    getSymbols() {
+      dispatch(getSymbols());
     }
     // dispatch = ()=>userTransactions()
   };

@@ -28,11 +28,12 @@ export const search = symbol => async dispatch => {
   }
 };
 
-export const buy = (symbol, price, quantity) => async dispatch => {
+export const buy = (symbol, companyName, price, quantity) => async dispatch => {
   let res;
   try {
     res = await axios.post(`/api/stock/buy`, {
       symbol,
+      companyName,
       price,
       quantity
     });

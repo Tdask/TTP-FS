@@ -22,13 +22,31 @@ export const decimalCleaner = num => {
 
 export const performance = (openPrice, currPrice) => {
   if (currPrice > openPrice) {
-    return { color: "green" };
+    return [
+      { color: "green" },
+      {
+        img:
+          "https://images.emojiterra.com/google/android-nougat/512px/2b06.png"
+      }
+    ];
   }
   if (currPrice === openPrice) {
-    return { color: "grey" };
+    return [
+      { color: "grey" },
+      {
+        img:
+          "https://images.emojiterra.com/google/android-nougat/512px/27a1.png"
+      }
+    ];
   }
   if (currPrice < openPrice) {
-    return { color: "red" };
+    return [
+      { color: "red" },
+      {
+        img:
+          "https://images.emojiterra.com/google/android-nougat/512px/2b07.png"
+      }
+    ];
   }
 };
 
