@@ -121,6 +121,8 @@ class unconnectedStocks extends Component {
     console.log("RETURNED Portfolio ", portfolio);
     this.props.getPortfolio(portfolio);
 
+    console.log("props inside of handleBuy: ", this.props);
+
     // console.log("props inside of handleBuy: ", this.props, {
     //   symbol,
     //   companyName,
@@ -265,8 +267,8 @@ class unconnectedStocks extends Component {
   render() {
     const { symbol, latestPrice, companyName } = this.state.quote;
     // console.log("COMPANY NAME: ", companyName);
-    console.log("STOCKS props: ", this.props);
-    console.log("STOCKS local state: ", this.state);
+    // console.log("STOCKS props: ", this.props);
+    // console.log("STOCKS local state: ", this.state);
 
     // console.log("symbol:", symbol);
     const { userId, balance } = this.props;
@@ -274,11 +276,11 @@ class unconnectedStocks extends Component {
     // console.log("PROPSSSS: ", this.props);
     return (
       <div className="stick">
-        <div className="box">
+        <h1 className="title is-2"> Buy stock </h1>
+        <div className="box is-one-third">
           <h3 className="title is-3">Balance: ${decimalCleaner(balance)}</h3>
         </div>
         <section className="section">
-          <h2>Buy stock: </h2>
           <div className="box card is-vcentered">
             {/* <div>{symbolsArr && <div> {symbolsArr[3]}</div>}</div> */}
             <form className="form" onSubmit={this.handleSubmit}>
@@ -370,7 +372,8 @@ const mapState = state => {
     userId: state.user.id,
     user: state.user,
     allSymbols: state.stock.symbols,
-    transactions: state.transactions
+    transactions: state.transactions,
+    portfolio: state.portfolio
   };
 };
 

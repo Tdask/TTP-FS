@@ -20,7 +20,7 @@ class AuthForm extends Component {
   }
   handleLogin(e) {
     this.props.handleSubmit(e);
-    this.props.history.push("/home");
+    this.props.history.push("/portfolio");
     // this.setState({
     //   isLoggedIn: true
     // });

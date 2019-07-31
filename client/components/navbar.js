@@ -28,15 +28,6 @@ class Navbar extends Component {
 
           <h3 className="title  yellow">Stock App</h3>
 
-          {this.props.isLoggedIn && (
-            <a
-              className="navbar-item"
-              href="#"
-              onClick={this.props.handleClick}
-            >
-              Logout
-            </a>
-          )}
           <a
             onClick={this.toggleMenu}
             role="button"
@@ -56,10 +47,13 @@ class Navbar extends Component {
           <div className="navbar-end">
             {this.props.isLoggedIn ? (
               <div className="navbar-item">
-                <Link className="navbar-item" to="/home">
-                  Home
-                </Link>
-
+                <a
+                  className="navbar-item"
+                  href="#"
+                  onClick={this.props.handleClick}
+                >
+                  Logout
+                </a>
                 <Link className="navbar-item" to="/transactions">
                   Transactions
                 </Link>

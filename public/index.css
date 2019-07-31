@@ -5,8 +5,16 @@
 }
 
 .stick {
-  position: sticky;
+  position: -webkit-sticky;
   top: 0%;
+}
+
+.try {
+  align-self: flex-start;
+}
+
+.try2 {
+  align-self: center;
 }
 
 .padInfo {

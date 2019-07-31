@@ -66,3 +66,19 @@ export const portfolioMaker = transactions => {
 
   return portfolio;
 };
+
+export const quantityChecker = (propsP, stateP) => {
+  console.log("propsP", propsP, "stateP", stateP);
+  if (Object.keys(propsP).length !== Object.keys(stateP).length) {
+    return false;
+  }
+  for (let symbol in propsP) {
+    console.log("symbol ", propsP[symbol].quantity, stateP[symbol].quantity);
+    if (propsP[symbol].quantity > stateP[symbol].quantity) {
+      return false;
+    }
+  }
+  return true;
+  //iterate through propsP, comparing each item's quantity to that in stateP..as soon as we hit one that's not equal we can jump out and return false
+  //if we get through iteration without returning false, return true
+};

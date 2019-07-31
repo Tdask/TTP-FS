@@ -11,6 +11,7 @@ import {
   calculateTotal,
   decimalCleaner,
   performance,
+  quantityChecker,
   portfolioMaker
 } from "../helpers";
 
@@ -30,7 +31,18 @@ class unconnectedPortfolio extends Component {
       totalValue: null
     };
     this.handleBatch = this.handleBatch.bind(this);
+    // this.checker = this.checker.bind(this);
   }
+
+  // checker() {
+  //   console.log("inside of checker");
+
+  //   let returnedVal = quantityChecker(
+  //     this.props.portfolio.portfolio,
+  //     this.state.portfolio
+  //   );
+  //   console.log("returnedVal: ", returnedVal);
+  // }
 
   componentDidMount() {
     console.log("component did mount");
@@ -75,18 +87,21 @@ class unconnectedPortfolio extends Component {
     console.log("componendDidUpdate props: ", this.props);
     console.log("componendDidUpdate local state: ", this.state);
     //if there is no this.state.portfolio, call portfolio helper function to make one (dont set to state just yet)
-    let portfolio = JSON.parse(JSON.stringify(this.state.portfolio));
-
+    let portfolio = JSON.parse(JSON.stringify(this.props.portfolio));
+    console.log("parsed portfolio: ", portfolio);
     if (
       Object.keys(this.props.portfolio).length > 0 &&
-      Object.keys(this.props.transactions).length === 0
+      this.props.transactions.transactions.length === 0
     ) {
       console.log("we need to get transactions");
-
       this.props.getTransactions();
     } else if (Object.keys(this.state.portfolio).length === 0) {
       console.log("there is no portfolio on state");
-      if (Object.keys(this.props.portfolio).length > 0) {
+      console.log("length check", Object.keys(this.props.portfolio).length);
+      if (
+        this.props.portfolio.portfolio &&
+        Object.keys(this.props.portfolio.portfolio).length > 0
+      ) {
         console.log("INSIDE need to create portfolio conditional");
 
         // portfolio = portfolioMaker(this.props.transactions.transactions);
@@ -94,6 +109,13 @@ class unconnectedPortfolio extends Component {
       }
     }
     //for buying more of the same stock: if this.props.transactions.transactions.length > Object.keys(this.state.portfolio).length, then we need to make a new portfolio object with this.props.transactions.transactions and call handleBatch with it.
+    console.log(
+      "Props Transactions: ",
+      this.props.transactions.transactions.length,
+      "vs",
+      Object.keys(this.state.portfolio).length
+    );
+
     // if (
     //   this.props.transactions.transactions.length >
     //   Object.keys(this.state.portfolio).length
@@ -115,6 +137,24 @@ class unconnectedPortfolio extends Component {
     ) {
       console.log("inside of need to update portfolio conditional");
       this.handleBatch(this.props.portfolio.portfolio);
+    }
+
+    //if we have items in both our props portfolio and our local state portfolio
+    if (
+      Object.keys(this.props.portfolio).length > 0 &&
+      Object.keys(this.state.portfolio).length > 0
+    ) {
+      console.log("inside first level of condition");
+
+      if (
+        // Object.keys(this.props.portfolio).length ===
+        //   Object.keys(this.state.portfolio).length &&
+        !quantityChecker(this.props.portfolio.portfolio, this.state.portfolio)
+      ) {
+        console.log("inside quantity not equal conditional");
+
+        this.handleBatch(this.props.portfolio.portfolio);
+      }
     }
   }
 
@@ -162,78 +202,98 @@ class unconnectedPortfolio extends Component {
     const { batchQuotes } = this.state;
     // console.log("BATCHQUOTES ", batchQuotes);
 
+    // if (Object.keys(this.state.portfolio).length === 0) {
+    //   return <h2>You haven't bought any stocks yet</h2>;
+    // }
+
     return (
-      <section className="section">
-        <div className="columns is-flex is-vcentered level">
-          <div className=" column level-left stick has-text-centered is-half">
-            <h1 className="level-item title is-2">My Portfolio</h1>
-            <div className="level-item box">
-              <h2 className="title is-3">
-                Total Value: ${this.state.totalValue}
-              </h2>
-            </div>
-            {/* {symbolArr &&
+      <section className="section stick">
+        <div className="columns is-vcentered level">
+          <div className=" column level-left has-text-centered is-half try">
+            <div className="hero">
+              <h1 className="level-item title is-2">My Portfolio</h1>
+              <div className="level-item box">
+                {Object.keys(this.state.portfolio).length === 0 ? (
+                  <h2 className="title is-3">
+                    You haven't bought any stocks yet
+                  </h2>
+                ) : (
+                  <h2 className="title is-3 is-fixed">
+                    Total Value: ${this.state.totalValue}
+                  </h2>
+                )}
+              </div>
+
+              {/* {symbolArr &&
           symbolArr.map(item => (
             <h4 className="outline" key={item}>
               Stock: {item} <br />
               Quantity: {portfolio[item].quantity}
             </h4>
           ))} */}
-            {batchQuotes ? (
-              <ul>
-                <div>
-                  {symbolArr.reverse().map(item => {
-                    return (
-                      <div className="box card" key={item}>
-                        <div
-                          className="title is-5"
-                          style={
-                            performance(
-                              batchQuotes[item].quote.open ||
-                                batchQuotes[item].quote.previousClose,
-                              batchQuotes[item].quote.latestPrice
-                            )[0]
-                          }
-                        >
-                          <strong>
-                            Symbol: {item} Current Price:{" "}
-                            {batchQuotes[item].quote.latestPrice}
-                          </strong>
-                          <img
-                            src={
+              {batchQuotes ? (
+                <ul>
+                  <div>
+                    {symbolArr.reverse().map(item => {
+                      return (
+                        <div className="box card" key={item}>
+                          <div
+                            className="title is-5"
+                            style={
                               performance(
                                 batchQuotes[item].quote.open ||
                                   batchQuotes[item].quote.previousClose,
                                 batchQuotes[item].quote.latestPrice
-                              )[1].img
+                              )[0]
                             }
-                            width="30"
-                            height="30"
-                          />
-                        </div>
-                        <div>
-                          <strong>{batchQuotes[item].quote.companyName}</strong>
-                        </div>
-                        <div>Quantity : {portfolio[item].quantity}</div>
+                          >
+                            <div>
+                              {item} x {portfolio[item].quantity}{" "}
+                              <div>
+                                {" "}
+                                Current Value:{" "}
+                                {decimalCleaner(
+                                  batchQuotes[item].quote.latestPrice *
+                                    portfolio[item].quantity
+                                )}
+                                <img
+                                  src={
+                                    performance(
+                                      batchQuotes[item].quote.open ||
+                                        batchQuotes[item].quote.previousClose,
+                                      batchQuotes[item].quote.latestPrice
+                                    )[1].img
+                                  }
+                                  width="30"
+                                  height="30"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <strong>
+                              {batchQuotes[item].quote.companyName}
+                            </strong>
+                          </div>
+                          <div>Quantity : {portfolio[item].quantity}</div>
 
-                        <div>
-                          Current Value:{" "}
-                          {decimalCleaner(
-                            batchQuotes[item].quote.latestPrice *
-                              portfolio[item].quantity
-                          )}
+                          <div>
+                            Current Price: {batchQuotes[item].quote.latestPrice}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </ul>
-            ) : (
-              <div>loading up-to-date info..</div>
-            )}
+                      );
+                    })}
+                  </div>
+                </ul>
+              ) : (
+                Object.keys(this.state.portfolio).length > 0 && (
+                  <div>loading up-to-date info..</div>
+                )
+              )}
+            </div>
           </div>
-          <div className="column level-right is-half has-text-centered">
-            <Stocks className="level-item" />
+          <div className="column level-right is-half has-text-centered try">
+            <Stocks className="level-item is-centered" />
           </div>
         </div>
       </section>
@@ -243,6 +303,8 @@ class unconnectedPortfolio extends Component {
 
 const mapState = state => {
   return {
+    firstName: state.user.firstName,
+    balance: state.user.balance,
     transactions: state.transactions,
     portfolio: state.portfolio
   };
