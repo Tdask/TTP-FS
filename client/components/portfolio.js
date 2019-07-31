@@ -76,13 +76,34 @@ class unconnectedPortfolio extends Component {
     console.log("componendDidUpdate local state: ", this.state);
     //if there is no this.state.portfolio, call portfolio helper function to make one (dont set to state just yet)
     let portfolio = JSON.parse(JSON.stringify(this.state.portfolio));
-    if (Object.keys(this.state.portfolio).length === 0) {
+
+    if (
+      Object.keys(this.props.portfolio).length > 0 &&
+      Object.keys(this.props.transactions).length === 0
+    ) {
+      console.log("we need to get transactions");
+
+      this.props.getTransactions();
+    } else if (Object.keys(this.state.portfolio).length === 0) {
       console.log("there is no portfolio on state");
-      if (this.props.transactions.transactions.length > 0) {
-        portfolio = portfolioMaker(this.props.transactions.transactions);
-        this.handleBatch(portfolio);
+      if (Object.keys(this.props.portfolio).length > 0) {
+        console.log("INSIDE need to create portfolio conditional");
+
+        // portfolio = portfolioMaker(this.props.transactions.transactions);
+        this.handleBatch(this.props.portfolio.portfolio);
       }
     }
+    //for buying more of the same stock: if this.props.transactions.transactions.length > Object.keys(this.state.portfolio).length, then we need to make a new portfolio object with this.props.transactions.transactions and call handleBatch with it.
+    // if (
+    //   this.props.transactions.transactions.length >
+    //   Object.keys(this.state.portfolio).length
+    // ) {
+    //   console.log("we gotta update the quantity of a pre-existing item");
+
+    //   portfolio = portfolioMaker(this.props.transactions.transactions);
+    //   this.handleBatch(portfolio);
+    // }
+
     //if no this.state.batchQuotes, make initial batch call to iex to get batchquotes (dont set to state yet)
     if (!this.state.batchQuotes && Object.keys(portfolio).length > 0) {
       console.log("no batchQuote condition triggered");
@@ -98,12 +119,16 @@ class unconnectedPortfolio extends Component {
   }
 
   async handleBatch(portfolio) {
-    // console.log("inside of handleBatch", portfolio);
+    console.log("inside of handleBatch", portfolio);
     const symbolArr = Object.keys(portfolio);
+    console.log("our symbolArr ", symbolArr);
+
     symbolArr[symbolArr.length - 1] = symbolArr[symbolArr.length - 1] + "&";
+
     const batchURL =
       process.env.API_URL +
       `stable/stock/market/batch?symbols=${symbolArr.join()}types=quote&token=${IEXCLOUD_PUBLIC_KEY}`;
+    console.log("OUR Batch URL: ", batchURL);
     const res = await axios.get(batchURL);
     console.log("Batch Response: ", res.data);
     //helper function called here where we send in res.data, which contains latest price, and this.state.portfolio, which contains the quantity of each item. will return back a number value that we can then set to local state's Total Value
@@ -114,8 +139,8 @@ class unconnectedPortfolio extends Component {
       batchQuotes: res.data,
       totalValue: result
     });
-
-    console.log("state immediately after being set in handleBatch", this.state);
+    this.props.getTransactions();
+    // console.log("state immediately after being set in handleBatch", this.state);
 
     // if (!this.interval) {
     //   this.interval = setInterval(() => {
@@ -124,7 +149,6 @@ class unconnectedPortfolio extends Component {
     //   }, 60000);
     // }
   }
-
   componentWillUnmount() {
     // clearInterval(this.interval);
   }
