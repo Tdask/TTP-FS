@@ -3,9 +3,9 @@ import { connect } from "react-redux";
 // import { IEXClient } from "iex-api";
 import * as _fetch from "isomorphic-fetch";
 // const iex = require("iexcloud_api_wrapper");
-import { buy, updateBalance } from "../store";
+import { buy, updateBalance, userTransactions, getPortfolio } from "../store";
 import axios from "axios";
-import { decimalCleaner } from "../helpers";
+import { decimalCleaner, portfolioMaker } from "../helpers";
 
 class unconnectedStocks extends Component {
   constructor(props) {
@@ -21,6 +21,7 @@ class unconnectedStocks extends Component {
       isSearching: true,
       suggestions: [],
       activeSuggestion: 0,
+      transactions: [],
       error: null
     };
     // this.getSymbols = this.getSymbols.bind(this);
@@ -40,6 +41,22 @@ class unconnectedStocks extends Component {
   }
 
   componentDidUpdate() {
+    console.log("STOCKS CDU PROPS: ", this.props);
+    console.log("STOCKS CDU LOCAL STATE: ", this.state);
+
+    //can make portfolio object here when transactions updates..save transactions to local state if this.props.transactions.length is more than this.state.transactions
+    if (this.props.transactions.transactions.length > this.state.transactions) {
+      console.log("INSIDE of conditional to make portfolio");
+
+      const portfolio = portfolioMaker(this.props.transactions.transactions);
+      this.setState({
+        transactions: this.props.transactions.transactions
+      });
+      //dispatch portfolio thunk here to update redux store...
+      //add a portfolio: {} to store, make a thunk that dispatches an action that returns portfolio to store...
+      this.props.getPortfolio(portfolio);
+    }
+
     if (this.state.input.length > 0) {
       // console.log("INSIDE of input not empty conditional");
       if (this.state.isEmpty) {
@@ -71,7 +88,8 @@ class unconnectedStocks extends Component {
     //as soon as we start typing, if there was a previous searchedstock in local state, then we clear it
     if (this.state.searchStock) {
       this.setState({
-        searchStock: null
+        searchStock: null,
+        quantity: 1
       });
     }
   }
@@ -86,6 +104,29 @@ class unconnectedStocks extends Component {
       boughtStock: symbol,
       isSearching: true
     });
+    // this.props.getTransactions();
+    let newTrans = this.props.transactions.transactions.slice();
+    newTrans.push({ symbol, latestPrice, quantity });
+    console.log("new Trans after push ", newTrans);
+
+    // .push({
+    //   symbol,
+    //   companyName,
+    //   latestPrice,
+    //   quantity
+    // });
+    console.log("newTrans: ", newTrans);
+
+    const portfolio = portfolioMaker(newTrans);
+    console.log("RETURNED Portfolio ", portfolio);
+    this.props.getPortfolio(portfolio);
+
+    // console.log("props inside of handleBuy: ", this.props, {
+    //   symbol,
+    //   companyName,
+    //   latestPrice,
+    //   quantity
+    // });
 
     // this.props.history.push("/transactions");
   }
@@ -192,7 +233,7 @@ class unconnectedStocks extends Component {
     const { suggestions } = this.state;
     return (
       suggestions && (
-        <ul className="suggestions">
+        <ul className="suggestions is-fixed">
           {suggestions.map((item, i) => {
             let className = "suggestion";
             if (i === this.state.activeSuggestion) {
@@ -228,74 +269,85 @@ class unconnectedStocks extends Component {
     console.log("STOCKS local state: ", this.state);
 
     // console.log("symbol:", symbol);
-    const { userId } = this.props;
+    const { userId, balance } = this.props;
     const { quantity, isEmpty } = this.state;
     // console.log("PROPSSSS: ", this.props);
     return (
-      <div>
-        <div className="box card">
-          {/* <div>{symbolsArr && <div> {symbolsArr[3]}</div>}</div> */}
-          <form className="form" onSubmit={this.handleSubmit}>
-            <div className="field">
-              <div className="control">
-                Search by ticker symbol:{" "}
-                <div>
-                  <input
-                    className="input"
-                    type="text"
-                    name="ticker"
-                    placeholder="ex: AAPL"
-                    onChange={e => this.handleChange(e)}
-                    // onKeyDown={e => this.handleKey(e)}
-                    value={this.state.input}
-                    autoComplete="off"
-                  />
-                  {this.renderSuggestions()}
-                </div>
-              </div>
-
-              <button type="submit" className="button">
-                Search
-              </button>
-            </div>
-          </form>
-          <div>
-            {symbol && !isEmpty && (
-              <div>
-                <div className="title is-5">
-                  <strong>{companyName}</strong>
-                </div>
-                <div className="title is-6">Price: {latestPrice}</div>
-
-                <div className="title is-6"> Qnty: {this.state.quantity}</div>
-                <button
-                  className="button is-rounded"
-                  onClick={() => this.handleIncrement(-1)}
-                >
-                  -
-                </button>
-                <button
-                  className="button is-rounded"
-                  onClick={() => this.handleIncrement(1)}
-                >
-                  +
-                </button>
-                <div className="title is-5">
-                  Total: {decimalCleaner(latestPrice * this.state.quantity)}
-                </div>
-                <div>{this.state.error && <div>{this.state.error}</div>}</div>
-                <button
-                  className="button is-success"
-                  onClick={() => {
-                    this.handleBuy(symbol, companyName, latestPrice, quantity);
-                  }}
-                >
-                  Buy
-                </button>
-              </div>
-            )}
-          </div>
+      <div className="stick">
+        <div className="box">
+          <h3 className="title is-3">Balance: ${decimalCleaner(balance)}</h3>
         </div>
+        <section className="section">
+          <h2>Buy stock: </h2>
+          <div className="box card is-vcentered">
+            {/* <div>{symbolsArr && <div> {symbolsArr[3]}</div>}</div> */}
+            <form className="form" onSubmit={this.handleSubmit}>
+              <div className="field">
+                <div className="control">
+                  Search by ticker symbol:{" "}
+                  <div className="is-fixed">
+                    <input
+                      className="input"
+                      type="text"
+                      name="ticker"
+                      placeholder="ex: AAPL"
+                      onChange={e => this.handleChange(e)}
+                      // onKeyDown={e => this.handleKey(e)}
+                      value={this.state.input}
+                      autoComplete="off"
+                    />
+                    {this.renderSuggestions()}
+                  </div>
+                </div>
+
+                <button type="submit" className="button">
+                  Search
+                </button>
+              </div>
+            </form>
+            <div>
+              {symbol && !isEmpty && (
+                <div>
+                  <div className="title is-5">
+                    <strong>{companyName}</strong>
+                  </div>
+                  <div className="title is-6">Price: {latestPrice}</div>
+
+                  <div className="title is-6"> Qnty: {this.state.quantity}</div>
+                  <button
+                    className="button is-rounded"
+                    onClick={() => this.handleIncrement(-1)}
+                  >
+                    -
+                  </button>
+                  <button
+                    className="button is-rounded"
+                    onClick={() => this.handleIncrement(1)}
+                  >
+                    +
+                  </button>
+                  <div className="title is-5">
+                    Total: {decimalCleaner(latestPrice * this.state.quantity)}
+                  </div>
+                  <div>{this.state.error && <div>{this.state.error}</div>}</div>
+                  <button
+                    className="button is-success"
+                    onClick={() => {
+                      this.handleBuy(
+                        symbol,
+                        companyName,
+                        latestPrice,
+                        quantity
+                      );
+                    }}
+                  >
+                    Buy
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
         <div>
           {this.state.boughtStock && (
             <section className="section">
@@ -317,7 +369,8 @@ const mapState = state => {
     balance: state.user.balance,
     userId: state.user.id,
     user: state.user,
-    allSymbols: state.stock.symbols
+    allSymbols: state.stock.symbols,
+    transactions: state.transactions
   };
 };
 
@@ -330,6 +383,12 @@ const mapDispatch = dispatch => {
     },
     updateBalance(id, updatedBalance) {
       dispatch(updateBalance(id, updatedBalance));
+    },
+    getTransactions() {
+      dispatch(userTransactions());
+    },
+    getPortfolio(portfolio) {
+      dispatch(getPortfolio(portfolio));
     }
   };
 };

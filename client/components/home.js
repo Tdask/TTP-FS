@@ -26,7 +26,7 @@ class Home extends Component {
     const { firstName, balance } = this.props;
     return (
       <section className="section">
-        <div className="columns is-centered">
+        <div className="columns is-flex is-vcentered">
           <div className="column has-text-centered is-full">
             <h2 className="title is-2">Welcome, {firstName}</h2>
             <div className="box">

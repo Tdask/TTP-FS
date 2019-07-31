@@ -1,5 +1,5 @@
-const GET_TRANSACTIONS = "GET_TRANSACTIONS";
 import axios from "axios";
+const GET_TRANSACTIONS = "GET_TRANSACTIONS";
 
 const defaultTransactions = {
   transactions: []

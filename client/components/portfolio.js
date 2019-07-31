@@ -35,11 +35,11 @@ class unconnectedPortfolio extends Component {
   componentDidMount() {
     console.log("component did mount");
     this.props.getTransactions();
-    // if (!this.props.allSymbols) {
-    //   console.log("WE HAVE TO GET ALL THE SYMBOLS!!!!!!!!!");
+    if (!this.props.allSymbols) {
+      console.log("WE HAVE TO GET ALL THE SYMBOLS!!!!!!!!!");
 
-    //   this.props.getSymbols();
-    // }
+      this.props.getSymbols();
+    }
 
     // console.log("props immediately after calling getTransactions", this.props);
     // const transactions = this.props.transactions.transactions;
@@ -70,21 +70,31 @@ class unconnectedPortfolio extends Component {
   }
 
   componentDidUpdate() {
+    //if there are no this.props.transactions, call this.getTransactions
+    // this.props.getTransactions();
     console.log("componendDidUpdate props: ", this.props);
     console.log("componendDidUpdate local state: ", this.state);
     //if there is no this.state.portfolio, call portfolio helper function to make one (dont set to state just yet)
-    let portfolio;
+    let portfolio = JSON.parse(JSON.stringify(this.state.portfolio));
     if (Object.keys(this.state.portfolio).length === 0) {
       console.log("there is no portfolio on state");
-      portfolio = portfolioMaker(this.props.transactions.transactions);
+      if (this.props.transactions.transactions.length > 0) {
+        portfolio = portfolioMaker(this.props.transactions.transactions);
+        this.handleBatch(portfolio);
+      }
     }
     //if no this.state.batchQuotes, make initial batch call to iex to get batchquotes (dont set to state yet)
-    if (!this.state.batchQuotes) {
+    if (!this.state.batchQuotes && Object.keys(portfolio).length > 0) {
       console.log("no batchQuote condition triggered");
       this.handleBatch(portfolio);
+    } else if (
+      Object.keys(portfolio).length > 0 &&
+      Object.keys(this.props.portfolio.portfolio).length >
+        Object.keys(this.state.portfolio).length
+    ) {
+      console.log("inside of need to update portfolio conditional");
+      this.handleBatch(this.props.portfolio.portfolio);
     }
-
-    //if no this.interval then create one that calls this.handleBatch every 60 seconds, passing in portfolio...need to make sure portfolio is updating here within this logic...maybe save a prevPortfolio and compare
   }
 
   async handleBatch(portfolio) {
@@ -120,8 +130,8 @@ class unconnectedPortfolio extends Component {
   }
 
   render() {
-    console.log("PORTFOLIO props", this.props);
-    console.log("PORTFOLIO local state", this.state);
+    // console.log("PORTFOLIO props", this.props);
+    // console.log("PORTFOLIO local state", this.state);
     const transactions = this.props.transactions.transactions;
     const { portfolio } = this.state;
     const symbolArr = Object.keys(portfolio);
@@ -129,10 +139,10 @@ class unconnectedPortfolio extends Component {
     // console.log("BATCHQUOTES ", batchQuotes);
 
     return (
-      <div>
-        <div className="columns level">
+      <section className="section">
+        <div className="columns is-flex is-vcentered level">
           <div className=" column level-left stick has-text-centered is-half">
-            <h1 className="level- item title is-2">My Portfolio</h1>
+            <h1 className="level-item title is-2">My Portfolio</h1>
             <div className="level-item box">
               <h2 className="title is-3">
                 Total Value: ${this.state.totalValue}
@@ -148,7 +158,7 @@ class unconnectedPortfolio extends Component {
             {batchQuotes ? (
               <ul>
                 <div>
-                  {symbolArr.map(item => {
+                  {symbolArr.reverse().map(item => {
                     return (
                       <div className="box card" key={item}>
                         <div
@@ -198,18 +208,19 @@ class unconnectedPortfolio extends Component {
               <div>loading up-to-date info..</div>
             )}
           </div>
-          <div className="column level-right is-half">
-            <Home />
+          <div className="column level-right is-half has-text-centered">
+            <Stocks className="level-item" />
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 }
 
 const mapState = state => {
   return {
-    transactions: state.transactions
+    transactions: state.transactions,
+    portfolio: state.portfolio
   };
 };
 
