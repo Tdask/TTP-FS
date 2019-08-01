@@ -154,6 +154,7 @@ class unconnectedStocks extends Component {
         process.env.API_URL +
         `stable/stock/${this.state.input}/quote?token=${IEXCLOUD_PUBLIC_KEY}`;
       const res = await axios.get(URL);
+      console.log("QUOTE: ", res.data);
       this.setState({
         searchStock: this.state.input,
         quote: res.data,
@@ -203,7 +204,12 @@ class unconnectedStocks extends Component {
   }
 
   render() {
-    const { symbol, latestPrice, companyName } = this.state.quote;
+    const {
+      symbol,
+      latestPrice,
+      companyName,
+      previousClose
+    } = this.state.quote;
     const { userId, balance } = this.props;
     const { quantity, isEmpty } = this.state;
     return (
@@ -251,7 +257,9 @@ class unconnectedStocks extends Component {
                   <div className="title is-5">
                     <strong>{companyName}</strong>
                   </div>
-                  <div className="title is-6">Price: {latestPrice}</div>
+                  <div className="title is-6">
+                    Price: {latestPrice || previousClose}
+                  </div>
 
                   <div className="title is-6"> Qnty: {this.state.quantity}</div>
                   <button
@@ -267,7 +275,10 @@ class unconnectedStocks extends Component {
                     +
                   </button>
                   <div className="title is-5">
-                    Total: {decimalCleaner(latestPrice * this.state.quantity)}
+                    Total:{" "}
+                    {decimalCleaner(
+                      (latestPrice || previousClose) * this.state.quantity
+                    )}
                   </div>
                   <button
                     className="button is-success"
