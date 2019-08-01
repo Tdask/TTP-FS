@@ -2,10 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 import { userTransactions, getSymbols } from "../store";
-import transaction from "../store/transaction";
-// import { calculateTotal } from "../helpers";
 import Stocks from "./stocks";
-import Home from "./home";
 
 import {
   calculateTotal,
@@ -16,12 +13,6 @@ import {
 } from "../helpers";
 
 const IEXCLOUD_PUBLIC_KEY = "pk_0b13685b98974e5c9501efc15246a72d";
-const dummySymbols = ["B", "A", "AAPL", "E", "L"];
-dummySymbols[dummySymbols.length - 1] =
-  dummySymbols[dummySymbols.length - 1] + "&";
-const batchURL =
-  process.env.API_URL +
-  `/stable/stock/market/batch?symbols=${dummySymbols.join()}types=quote&token=${IEXCLOUD_PUBLIC_KEY}`;
 
 class unconnectedPortfolio extends Component {
   constructor(props) {
@@ -31,180 +22,92 @@ class unconnectedPortfolio extends Component {
       totalValue: null
     };
     this.handleBatch = this.handleBatch.bind(this);
-    // this.checker = this.checker.bind(this);
   }
 
-  // checker() {
-  //   console.log("inside of checker");
-
-  //   let returnedVal = quantityChecker(
-  //     this.props.portfolio.portfolio,
-  //     this.state.portfolio
-  //   );
-  //   console.log("returnedVal: ", returnedVal);
-  // }
-
   componentDidMount() {
-    console.log("component did mount");
     this.props.getTransactions();
     if (!this.props.allSymbols) {
-      console.log("WE HAVE TO GET ALL THE SYMBOLS!!!!!!!!!");
-
       this.props.getSymbols();
     }
 
-    // console.log("props immediately after calling getTransactions", this.props);
-    // const transactions = this.props.transactions.transactions;
-    // console.log("tranzactions ", transactions);
-    // // console.log("tranzz is array?", Array.isArray(transactions));
-    // const portfolio = {};
-    // transactions.forEach(trans => {
-    //   // console.log("iterated trans: ", trans);
-    //   if (!portfolio[trans.symbol]) {
-    //     portfolio[trans.symbol] = { quantity: trans.quantity };
-    //   } else {
-    //     const prevQuantity = portfolio[trans.symbol].quantity;
-    //     portfolio[trans.symbol] = { quantity: prevQuantity + trans.quantity };
-    //   }
-    // });
-
-    // console.log("PORTFOLIO after iteration: ", portfolio);
-
-    // this.setState({
-    //   portfolio: portfolio
-    // });
-    // this.handleBatch(portfolio);
-
-    // this.interval = setInterval(() => {
-    //   console.log("interval triggered");
-    //   this.handleBatch(portfolio);
-    // }, 60000);
+    this.interval = setInterval(() => {
+      this.handleBatch(this.state.portfolio);
+    }, 60000);
   }
 
   componentDidUpdate() {
-    //if there are no this.props.transactions, call this.getTransactions
-    // this.props.getTransactions();
-    console.log("componendDidUpdate props: ", this.props);
-    console.log("componendDidUpdate local state: ", this.state);
-    //if there is no this.state.portfolio, call portfolio helper function to make one (dont set to state just yet)
     let portfolio = JSON.parse(JSON.stringify(this.props.portfolio));
-    console.log("parsed portfolio: ", portfolio);
+
+    //get transactions initially
     if (
       Object.keys(this.props.portfolio).length > 0 &&
       this.props.transactions.transactions.length === 0
     ) {
-      console.log("we need to get transactions");
       this.props.getTransactions();
     } else if (Object.keys(this.state.portfolio).length === 0) {
-      console.log("there is no portfolio on state");
-      console.log("length check", Object.keys(this.props.portfolio).length);
+      //if no portfolio on state but on props, need to update local state
       if (
         this.props.portfolio.portfolio &&
         Object.keys(this.props.portfolio.portfolio).length > 0
       ) {
-        console.log("INSIDE need to create portfolio conditional");
-
-        // portfolio = portfolioMaker(this.props.transactions.transactions);
         this.handleBatch(this.props.portfolio.portfolio);
       }
     }
-    //for buying more of the same stock: if this.props.transactions.transactions.length > Object.keys(this.state.portfolio).length, then we need to make a new portfolio object with this.props.transactions.transactions and call handleBatch with it.
-    console.log(
-      "Props Transactions: ",
-      this.props.transactions.transactions.length,
-      "vs",
-      Object.keys(this.state.portfolio).length
-    );
 
-    // if (
-    //   this.props.transactions.transactions.length >
-    //   Object.keys(this.state.portfolio).length
-    // ) {
-    //   console.log("we gotta update the quantity of a pre-existing item");
-
-    //   portfolio = portfolioMaker(this.props.transactions.transactions);
-    //   this.handleBatch(portfolio);
-    // }
-
-    //if no this.state.batchQuotes, make initial batch call to iex to get batchquotes (dont set to state yet)
+    //if no batchQuotes on state yet, make initial batch call to iex
     if (!this.state.batchQuotes && Object.keys(portfolio).length > 0) {
-      console.log("no batchQuote condition triggered");
       this.handleBatch(portfolio);
     } else if (
       Object.keys(portfolio).length > 0 &&
       Object.keys(this.props.portfolio.portfolio).length >
         Object.keys(this.state.portfolio).length
     ) {
-      console.log("inside of need to update portfolio conditional");
+      //portfolio updates
       this.handleBatch(this.props.portfolio.portfolio);
     }
 
-    //if we have items in both our props portfolio and our local state portfolio
+    //if items in both our props portfolio and our local state portfolio
     if (
       Object.keys(this.props.portfolio).length > 0 &&
       Object.keys(this.state.portfolio).length > 0
     ) {
-      console.log("inside first level of condition");
-
       if (
-        // Object.keys(this.props.portfolio).length ===
-        //   Object.keys(this.state.portfolio).length &&
+        //if the quantities don't match need to update our state portfolio
         !quantityChecker(this.props.portfolio.portfolio, this.state.portfolio)
       ) {
-        console.log("inside quantity not equal conditional");
-
         this.handleBatch(this.props.portfolio.portfolio);
       }
     }
   }
 
   async handleBatch(portfolio) {
-    console.log("inside of handleBatch", portfolio);
     const symbolArr = Object.keys(portfolio);
-    console.log("our symbolArr ", symbolArr);
-
     symbolArr[symbolArr.length - 1] = symbolArr[symbolArr.length - 1] + "&";
 
     const batchURL =
       process.env.API_URL +
       `stable/stock/market/batch?symbols=${symbolArr.join()}types=quote&token=${IEXCLOUD_PUBLIC_KEY}`;
-    console.log("OUR Batch URL: ", batchURL);
     const res = await axios.get(batchURL);
-    console.log("Batch Response: ", res.data);
-    //helper function called here where we send in res.data, which contains latest price, and this.state.portfolio, which contains the quantity of each item. will return back a number value that we can then set to local state's Total Value
+
+    //helper function here is sent latest price, and portfolio which has quantity of each item. returns back a total value
     let result = decimalCleaner(calculateTotal(res.data, portfolio));
-    // console.log("total value result: ", result);
     this.setState({
       portfolio,
       batchQuotes: res.data,
       totalValue: result
     });
     this.props.getTransactions();
-    // console.log("state immediately after being set in handleBatch", this.state);
-
-    // if (!this.interval) {
-    //   this.interval = setInterval(() => {
-    //     // console.log("interval");
-    //     this.handleBatch(this.state.portfolio);
-    //   }, 60000);
-    // }
   }
+
   componentWillUnmount() {
-    // clearInterval(this.interval);
+    clearInterval(this.interval);
   }
 
   render() {
-    // console.log("PORTFOLIO props", this.props);
-    // console.log("PORTFOLIO local state", this.state);
     const transactions = this.props.transactions.transactions;
     const { portfolio } = this.state;
     const symbolArr = Object.keys(portfolio);
     const { batchQuotes } = this.state;
-    // console.log("BATCHQUOTES ", batchQuotes);
-
-    // if (Object.keys(this.state.portfolio).length === 0) {
-    //   return <h2>You haven't bought any stocks yet</h2>;
-    // }
 
     return (
       <section className="section stick">
@@ -214,9 +117,7 @@ class unconnectedPortfolio extends Component {
               <h1 className="level-item title is-2">My Portfolio</h1>
               <div className="level-item box">
                 {Object.keys(this.state.portfolio).length === 0 ? (
-                  <h2 className="title is-3">
-                    You haven't bought any stocks yet
-                  </h2>
+                  <h2 className="title is-3">waiting for stocks...</h2>
                 ) : (
                   <h2 className="title is-3 is-fixed">
                     Total Value: ${this.state.totalValue}
@@ -224,13 +125,6 @@ class unconnectedPortfolio extends Component {
                 )}
               </div>
 
-              {/* {symbolArr &&
-          symbolArr.map(item => (
-            <h4 className="outline" key={item}>
-              Stock: {item} <br />
-              Quantity: {portfolio[item].quantity}
-            </h4>
-          ))} */}
               {batchQuotes ? (
                 <ul>
                   <div>
@@ -306,7 +200,8 @@ const mapState = state => {
     firstName: state.user.firstName,
     balance: state.user.balance,
     transactions: state.transactions,
-    portfolio: state.portfolio
+    portfolio: state.portfolio,
+    allSymbols: state.stock.symbols
   };
 };
 
@@ -318,7 +213,6 @@ const mapDispatch = dispatch => {
     getSymbols() {
       dispatch(getSymbols());
     }
-    // dispatch = ()=>userTransactions()
   };
 };
 

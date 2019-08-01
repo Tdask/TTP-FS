@@ -25,4 +25,3 @@ const Transaction = db.define("transaction", {
 });
 
 module.exports = Transaction;
-//ticker symbol, price (when bought), quantity ==> can use these 2 tables to display total price of transaction on front end, no real reason to make another column in db right?

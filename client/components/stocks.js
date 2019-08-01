@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-// import { IEXClient } from "iex-api";
 import * as _fetch from "isomorphic-fetch";
-// const iex = require("iexcloud_api_wrapper");
 import { buy, updateBalance, userTransactions, getPortfolio } from "../store";
 import axios from "axios";
 import { decimalCleaner, portfolioMaker } from "../helpers";
@@ -24,14 +22,12 @@ class unconnectedStocks extends Component {
       transactions: [],
       error: null
     };
-    // this.getSymbols = this.getSymbols.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleIncrement = this.handleIncrement.bind(this);
     this.handleBuy = this.handleBuy.bind(this);
     this.renderSuggestions = this.renderSuggestions.bind(this);
     this.selectSuggestion = this.selectSuggestion.bind(this);
-    // this.handleKey = this.handleKey.bind(this);
   }
 
   componentDidMount() {
@@ -41,26 +37,21 @@ class unconnectedStocks extends Component {
   }
 
   componentDidUpdate() {
-    console.log("STOCKS CDU PROPS: ", this.props);
-    console.log("STOCKS CDU LOCAL STATE: ", this.state);
-
-    //can make portfolio object here when transactions updates..save transactions to local state if this.props.transactions.length is more than this.state.transactions
-    if (this.props.transactions.transactions.length > this.state.transactions) {
-      console.log("INSIDE of conditional to make portfolio");
-
+    //make portfolio object here when transactions initially updates..save transactions to local state if props transactions.length is more state transactions.length
+    if (
+      this.props.transactions.transactions.length >
+      this.state.transactions.length
+    ) {
       const portfolio = portfolioMaker(this.props.transactions.transactions);
       this.setState({
         transactions: this.props.transactions.transactions
       });
       //dispatch portfolio thunk here to update redux store...
-      //add a portfolio: {} to store, make a thunk that dispatches an action that returns portfolio to store...
       this.props.getPortfolio(portfolio);
     }
 
     if (this.state.input.length > 0) {
-      // console.log("INSIDE of input not empty conditional");
       if (this.state.isEmpty) {
-        // console.log("INSIDE of isEmpty true");
         this.setState({
           isEmpty: false
         });
@@ -68,28 +59,30 @@ class unconnectedStocks extends Component {
     }
 
     if (this.state.input.length === 0 && !this.state.isEmpty) {
-      // console.log("INSIDE of input is empty conditional");
-
       this.setState({
         isEmpty: true
       });
     }
 
     if (this.state.isEmpty) {
-      // console.log("is empty");
       if (this.state.quote.symbol) {
-        // console.log("there is a quote symbol");
         this.setState({
           quote: {}
         });
       }
     }
 
-    //as soon as we start typing, if there was a previous searchedstock in local state, then we clear it
+    //as soon as you start typing, if there was a previous searchedstock in local state clear it
     if (this.state.searchStock) {
       this.setState({
         searchStock: null,
         quantity: 1
+      });
+    }
+
+    if (this.state.suggestions.length > 0 && this.state.error) {
+      this.setState({
+        error: null
       });
     }
   }
@@ -102,39 +95,17 @@ class unconnectedStocks extends Component {
       input: [],
       quote: {},
       boughtStock: symbol,
-      isSearching: true
+      isSearching: true,
+      error: null
     });
-    // this.props.getTransactions();
     let newTrans = this.props.transactions.transactions.slice();
     newTrans.push({ symbol, latestPrice, quantity });
-    console.log("new Trans after push ", newTrans);
-
-    // .push({
-    //   symbol,
-    //   companyName,
-    //   latestPrice,
-    //   quantity
-    // });
-    console.log("newTrans: ", newTrans);
 
     const portfolio = portfolioMaker(newTrans);
-    console.log("RETURNED Portfolio ", portfolio);
     this.props.getPortfolio(portfolio);
-
-    console.log("props inside of handleBuy: ", this.props);
-
-    // console.log("props inside of handleBuy: ", this.props, {
-    //   symbol,
-    //   companyName,
-    //   latestPrice,
-    //   quantity
-    // });
-
-    // this.props.history.push("/transactions");
   }
 
   handleChange(e) {
-    // console.log("handle change called");
     const input = e.target.value;
     let suggestions = [];
     if (input.length > 0) {
@@ -149,39 +120,11 @@ class unconnectedStocks extends Component {
     });
   }
 
-  // handleKey(e) {
-  //   console.log("key code", e.keyCode);
-
-  //   //if enter key is pressed
-  //   if (e.keyCode === 13) {
-  //     this.handleSubmit(e);
-  //   }
-  //   //if UP is pressed
-  //   if (e.keyCode === 38) {
-  //     if (this.state.activeSuggestion === 0) {
-  //       return;
-  //     }
-  //     this.setState({
-  //       activeSuggestion: this.state.activeSuggestion - 1
-  //     });
-  //   }
-  //   //if DOWN is pressed
-  //   if (e.keyCode === 40) {
-  //     if (this.state.activeSuggestion - 1 === this.state.suggestions.length) {
-  //       return;
-  //     }
-  //     this.setState({
-  //       activeSuggestion: this.state.activeSuggestion + 1
-  //     });
-  //   }
-  // }
-
   handleIncrement(n) {
     const quantity = this.state.quantity;
     const { latestPrice } = this.state.quote;
     const { balance } = this.props;
     const isPos = n > 0;
-    // if (quantity * latestPrice ){}
     if (isPos) {
       if (latestPrice * quantity + latestPrice < balance) {
         this.setState({
@@ -191,7 +134,7 @@ class unconnectedStocks extends Component {
       }
       if (latestPrice * quantity + latestPrice > balance) {
         this.setState({
-          error: "you do not have enough money"
+          error: "you do not have enough money for more"
         });
       }
     }
@@ -218,18 +161,13 @@ class unconnectedStocks extends Component {
         isSearching: true,
         suggestions: []
       });
-      // const stockData = await iex.quote(this.state.input);
-      // console.log("stockData: ", stockData);
     } catch (error) {
       console.log(error);
+      this.setState({
+        error: "Must be a valid ticker symbol"
+      });
     }
   }
-
-  // async getSymbols() {
-  //   // const iex = new IEXClient(_fetch);
-  //   // const symbols = await iex.symbols();
-  //   // return symbols.map(stock => stock.symbol);
-  // }
 
   renderSuggestions() {
     const { suggestions } = this.state;
@@ -266,23 +204,24 @@ class unconnectedStocks extends Component {
 
   render() {
     const { symbol, latestPrice, companyName } = this.state.quote;
-    // console.log("COMPANY NAME: ", companyName);
-    // console.log("STOCKS props: ", this.props);
-    // console.log("STOCKS local state: ", this.state);
-
-    // console.log("symbol:", symbol);
     const { userId, balance } = this.props;
     const { quantity, isEmpty } = this.state;
-    // console.log("PROPSSSS: ", this.props);
     return (
       <div className="stick">
         <h1 className="title is-2"> Buy stock </h1>
+
         <div className="box is-one-third">
           <h3 className="title is-3">Balance: ${decimalCleaner(balance)}</h3>
         </div>
         <section className="section">
+          <div>
+            {this.state.error && (
+              <div className="is-size-3 has-text-danger">
+                {this.state.error}
+              </div>
+            )}
+          </div>
           <div className="box card is-vcentered">
-            {/* <div>{symbolsArr && <div> {symbolsArr[3]}</div>}</div> */}
             <form className="form" onSubmit={this.handleSubmit}>
               <div className="field">
                 <div className="control">
@@ -294,7 +233,6 @@ class unconnectedStocks extends Component {
                       name="ticker"
                       placeholder="ex: AAPL"
                       onChange={e => this.handleChange(e)}
-                      // onKeyDown={e => this.handleKey(e)}
                       value={this.state.input}
                       autoComplete="off"
                     />
@@ -331,7 +269,6 @@ class unconnectedStocks extends Component {
                   <div className="title is-5">
                     Total: {decimalCleaner(latestPrice * this.state.quantity)}
                   </div>
-                  <div>{this.state.error && <div>{this.state.error}</div>}</div>
                   <button
                     className="button is-success"
                     onClick={() => {
@@ -365,7 +302,6 @@ class unconnectedStocks extends Component {
   }
 }
 
-//how do we map the user's balance (from User.db) to state, to props? do we have to make a new action inside of user store?
 const mapState = state => {
   return {
     balance: state.user.balance,
@@ -380,8 +316,6 @@ const mapState = state => {
 const mapDispatch = dispatch => {
   return {
     handleBuy(symbol, companyName, price, quantity) {
-      // e.preventDefault();
-
       dispatch(buy(symbol, companyName, price, quantity));
     },
     updateBalance(id, updatedBalance) {

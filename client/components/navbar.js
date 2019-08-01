@@ -25,9 +25,7 @@ class Navbar extends Component {
           <a className="navbar-item">
             <img src="https://images.emojiterra.com/google/android-oreo/512px/1f4b9.png" />
           </a>
-
           <h3 className="title  yellow">Stock App</h3>
-
           <a
             onClick={this.toggleMenu}
             role="button"

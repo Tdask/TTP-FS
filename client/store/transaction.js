@@ -13,7 +13,6 @@ export const userTransactions = () => async dispatch => {
   let res;
   try {
     res = await axios.get(`/api/stock/transactions`);
-    console.log("userTransactions res: ", res.data);
     dispatch(getTransactions(res.data));
   } catch (error) {
     console.log(error);

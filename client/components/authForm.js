@@ -1,37 +1,18 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { login, signup } from "../store";
-// import UnconnectedSignup from "./signup";
 
 class AuthForm extends Component {
   constructor(props) {
     super(props);
-    // this.state = {
-    //   isLoggedIn = false
-    // }
     this.handleLogin = this.handleLogin.bind(this);
   }
-  componentDidMount() {
-    // console.log("history inside authform: ", history);
-  }
 
-  componentDidUpdate() {
-    console.log("props inside of component did update: ", this.props);
-  }
   handleLogin(e) {
     this.props.handleSubmit(e);
     this.props.history.push("/portfolio");
-    // this.setState({
-    //   isLoggedIn: true
-    // });
   }
   render() {
-    // if(this.state.isLoggedIn){
-    //   return (
-    //     <Redirect to="/home"/>
-    //   )
-    // }
-    console.log("PROPS INSIDE AUTHFORM RENDER", this.props);
     return (
       <section className="section">
         <div className="columns is-centered">
@@ -92,10 +73,6 @@ const mapSignup = state => {
     error: state.user.error
   };
 };
-
-// const mapDispatchLogin = dispatch => {
-//   return dispatch(login({ email, password }));
-// };
 
 const mapDispatch = dispatch => {
   return {

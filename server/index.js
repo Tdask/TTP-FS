@@ -12,10 +12,6 @@ const PORT = process.env.PORT || 3000;
 require("dotenv").config();
 const API_URL = "https://cloud.iexapis.com/";
 
-// if (process.env.NODE_ENV !== "production") require("../secrets");
-
-// process.env.IEX_CLIENT_SECRET;
-// passport registration
 passport.serializeUser((user, done) => {
   try {
     done(null, user.id);
@@ -33,19 +29,13 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// passport.deserializeUser((id, done) => {
-//   User.findByPk(id)
-//     .then(user => done(null, user))
-//     .catch(done);
-// });
-
 const createApp = () => {
   //logging middleware
   app.use(morgan("dev"));
 
   //body parsing middleware
-  app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json({ limit: "50mb", extended: true }));
+  app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
   //session middleware with passport
   app.use(
@@ -109,14 +99,6 @@ async function init() {
     console.log(error);
   }
 }
-
-// const init = async () => {
-//   try {
-//     await models.User.sync();
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 init();
 

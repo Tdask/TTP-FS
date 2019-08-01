@@ -12,17 +12,12 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    // console.log("HOME component did mount props", this.props);
     if (!this.props.allSymbols) {
-      console.log("WE HAVE TO GET ALL THE SYMBOLS!!!!!!!!!");
-
       this.props.getSymbols();
     }
   }
 
   render() {
-    console.log("home render props", this.props);
-
     const { firstName, balance } = this.props;
     return (
       <section className="section">

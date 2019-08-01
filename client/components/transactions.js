@@ -15,7 +15,6 @@ class unconnectedTransactions extends Component {
 
   render() {
     const items = this.props.transactions.transactions;
-    console.log("ITEMS: ", items);
     return (
       <section className="section">
         <div className="columns is-centered">
@@ -32,19 +31,15 @@ class unconnectedTransactions extends Component {
                       </div>
                       <div className="card-header-icon">
                         <div className="white">
-                          Ordered on: {item.createdAt.slice(0, 10)} at:{" "}
+                          Bought on: {item.createdAt.slice(0, 10)} at:{" "}
                           {item.createdAt.split("T")[1].slice(0, 8)} id#{" "}
                           {item.id}
                         </div>
-                        {/* <div> id# {item.id} </div> */}
                       </div>
                     </div>
                     <div>
-                      {/* <div> Ordered on: {item.createdAt.slice(0, 10)}</div> */}
-
                       <div className="card">
                         <div />
-
                         <section className="padInfo">
                           <div className="text"> Symbol: {item.symbol}</div>
                           <div> Price: {item.price}</div>
@@ -80,7 +75,6 @@ const mapDispatch = dispatch => {
     getTransactions() {
       dispatch(userTransactions());
     }
-    // dispatch = ()=>userTransactions()
   };
 };
 

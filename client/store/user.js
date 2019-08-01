@@ -1,5 +1,4 @@
 import axios from "axios";
-// import { auth } from "../../../../Immersive/Async/boilermaker/client/store";
 
 //ACTION TYPES
 const GET_USER = "GET_USER";
@@ -75,8 +74,6 @@ export const logout = () => async dispatch => {
 export const updateBalance = (id, updatedBalance) => async dispatch => {
   try {
     const res = await axios.put(`/auth/me/${id}`, updatedBalance);
-    // console.log("THE RETURNED RESPONSE: ", res);
-
     dispatch(updated_balance(res.data));
   } catch (error) {
     console.log(error);
@@ -87,7 +84,6 @@ export const updateBalance = (id, updatedBalance) => async dispatch => {
 export default function(state = defaultUser, action) {
   switch (action.type) {
     case GET_USER:
-      console.log("GET USER REDUCER", action.user);
       return action.user;
     case REMOVE_USER:
       return defaultUser;

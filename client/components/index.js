@@ -1,4 +1,4 @@
-// central export for our components. can import all our components from here instead of specific file they belong to
+// central export for components. can import all components from here instead of specific file they belong to
 
 export { Login } from "./authForm";
 export { Signup } from "./signup";

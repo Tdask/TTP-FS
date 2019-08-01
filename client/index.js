@@ -6,7 +6,6 @@ import history from "./history";
 import store from "./store";
 import App from "./app";
 import "../public/index.css";
-// import "bulma/css/bulma.css";
 
 ReactDOM.render(
   <Provider store={store}>
