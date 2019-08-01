@@ -20,7 +20,6 @@ export const search = symbol => async dispatch => {
   let res;
   try {
     res = await axios.post(`/api/stock/search`, symbol);
-    console.log("res: ", res);
   } catch (error) {
     console.log(error);
   }

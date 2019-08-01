@@ -154,7 +154,6 @@ class unconnectedStocks extends Component {
         process.env.API_URL +
         `stable/stock/${this.state.input}/quote?token=${IEXCLOUD_PUBLIC_KEY}`;
       const res = await axios.get(URL);
-      console.log("QUOTE: ", res.data);
       this.setState({
         searchStock: this.state.input,
         quote: res.data,
