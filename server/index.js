@@ -9,7 +9,7 @@ const sessionStore = new SequelizeStore({ db });
 const app = express();
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 3000;
-require("dotenv").config();
+// require("dotenv").config();
 const API_URL = "https://cloud.iexapis.com/";
 
 passport.serializeUser((user, done) => {
