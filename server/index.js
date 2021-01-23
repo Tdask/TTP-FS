@@ -43,7 +43,7 @@ const createApp = () => {
       secret: process.env.SESSION_SECRET || "a wildly insecure secret",
       store: sessionStore,
       resave: false,
-      saveUninitialized: false
+      saveUninitialized: false,
     })
   );
 
@@ -69,12 +69,12 @@ const createApp = () => {
   });
 
   //serve up index.html
-  app.get("*", function(req, res) {
+  app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "../public/index.html"));
   });
 
   //error handling endware
-  app.use(function(err, req, res, next) {
+  app.use(function (err, req, res, next) {
     console.error(err);
     console.error(err.stack);
     res.status(err.status || 500).send(err.message || "Internal server error.");

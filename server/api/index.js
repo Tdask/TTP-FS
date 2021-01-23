@@ -12,7 +12,7 @@ router.post("/stock/search", async (req, res, next) => {
 router.post("/stock/buy", async (req, res, next) => {
   try {
     const userId = req.user.dataValues.id;
-    req.body.userId = userId;
+    if (req.body && req.user) req.body.userId = userId;
     const transaction = await Transaction.create(req.body);
     res.json(transaction);
   } catch (error) {
@@ -23,10 +23,11 @@ router.post("/stock/buy", async (req, res, next) => {
 router.get("/stock/transactions", async (req, res, next) => {
   try {
     let idToSearch = req.user.dataValues.id;
+    console.log("id to search", idToSearch);
     const transactions = await Transaction.findAll({
       where: {
-        userId: idToSearch
-      }
+        userId: idToSearch,
+      },
     });
     res.json(transactions);
   } catch (error) {
@@ -34,7 +35,7 @@ router.get("/stock/transactions", async (req, res, next) => {
   }
 });
 
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
   const err = new Error("Not found.");
   err.status = 404;
   next(err);
