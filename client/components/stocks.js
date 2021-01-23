@@ -20,7 +20,7 @@ class unconnectedStocks extends Component {
       suggestions: [],
       activeSuggestion: 0,
       transactions: [],
-      error: null
+      error: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -32,7 +32,7 @@ class unconnectedStocks extends Component {
 
   componentDidMount() {
     this.setState({
-      isLoading: false
+      isLoading: false,
     });
   }
 
@@ -44,7 +44,7 @@ class unconnectedStocks extends Component {
     ) {
       const portfolio = portfolioMaker(this.props.transactions.transactions);
       this.setState({
-        transactions: this.props.transactions.transactions
+        transactions: this.props.transactions.transactions,
       });
       //dispatch portfolio thunk here to update redux store...
       this.props.getPortfolio(portfolio);
@@ -53,21 +53,21 @@ class unconnectedStocks extends Component {
     if (this.state.input.length > 0) {
       if (this.state.isEmpty) {
         this.setState({
-          isEmpty: false
+          isEmpty: false,
         });
       }
     }
 
     if (this.state.input.length === 0 && !this.state.isEmpty) {
       this.setState({
-        isEmpty: true
+        isEmpty: true,
       });
     }
 
     if (this.state.isEmpty) {
       if (this.state.quote.symbol) {
         this.setState({
-          quote: {}
+          quote: {},
         });
       }
     }
@@ -76,13 +76,13 @@ class unconnectedStocks extends Component {
     if (this.state.searchStock) {
       this.setState({
         searchStock: null,
-        quantity: 1
+        quantity: 1,
       });
     }
 
     if (this.state.suggestions.length > 0 && this.state.error) {
       this.setState({
-        error: null
+        error: null,
       });
     }
   }
@@ -96,7 +96,7 @@ class unconnectedStocks extends Component {
       quote: {},
       boughtStock: symbol,
       isSearching: true,
-      error: null
+      error: null,
     });
     let newTrans = this.props.transactions.transactions.slice();
     newTrans.push({ symbol, latestPrice, quantity });
@@ -110,13 +110,13 @@ class unconnectedStocks extends Component {
     let suggestions = [];
     if (input.length > 0) {
       const regex = new RegExp(`^${input}`, "i");
-      suggestions = this.props.allSymbols.filter(item =>
+      suggestions = this.props.allSymbols.filter((item) =>
         regex.test(item.symbol)
       );
     }
     this.setState({
       input,
-      suggestions
+      suggestions,
     });
   }
 
@@ -129,19 +129,19 @@ class unconnectedStocks extends Component {
       if (latestPrice * quantity + latestPrice < balance) {
         this.setState({
           quantity: this.state.quantity + 1,
-          error: null
+          error: null,
         });
       }
       if (latestPrice * quantity + latestPrice > balance) {
         this.setState({
-          error: "you do not have enough money for more"
+          error: "you do not have enough money for more",
         });
       }
     }
     if (!isPos && this.state.quantity > 1) {
       this.setState({
         quantity: this.state.quantity - 1,
-        error: null
+        error: null,
       });
     }
   }
@@ -159,46 +159,44 @@ class unconnectedStocks extends Component {
         quote: res.data,
         boughtStock: null,
         isSearching: true,
-        suggestions: []
+        suggestions: [],
       });
     } catch (error) {
       console.log(error);
       this.setState({
-        error: "Must be a valid ticker symbol"
+        error: "Must be a valid ticker symbol",
       });
     }
   }
 
   renderSuggestions() {
     const { suggestions } = this.state;
-    return (
-      suggestions && (
-        <ul className="suggestions is-fixed">
-          {suggestions.map((item, i) => {
-            let className = "suggestion";
-            if (i === this.state.activeSuggestion) {
-              className = "suggestion-active";
-            }
+    return suggestions ? (
+      <ul className="suggestions is-fixed">
+        {suggestions.map((item, i) => {
+          let className = "suggestion";
+          if (i === this.state.activeSuggestion) {
+            className = "suggestion-active";
+          }
 
-            return (
-              <li
-                className={className}
-                key={i}
-                onClick={() => this.selectSuggestion(item)}
-              >
-                {item.symbol} - {item.name}
-              </li>
-            );
-          })}
-        </ul>
-      )
-    );
+          return (
+            <li
+              className={className}
+              key={i}
+              onClick={() => this.selectSuggestion(item)}
+            >
+              {item.symbol} - {item.name}
+            </li>
+          );
+        })}
+      </ul>
+    ) : null;
   }
 
   selectSuggestion(item) {
     this.setState({
       input: item.symbol,
-      suggestions: []
+      suggestions: [],
     });
   }
 
@@ -207,10 +205,11 @@ class unconnectedStocks extends Component {
       symbol,
       latestPrice,
       companyName,
-      previousClose
+      previousClose,
     } = this.state.quote;
     const { userId, balance } = this.props;
     const { quantity, isEmpty } = this.state;
+    console.log("state", this.state);
     return (
       <div className="stick">
         <h1 className="title is-2"> Buy stock </h1>
@@ -230,18 +229,18 @@ class unconnectedStocks extends Component {
             <form className="form" onSubmit={this.handleSubmit}>
               <div className="field">
                 <div className="control">
-                  Search by ticker symbol:{" "}
+                  Search by ticker symbol:
                   <div className="is-fixed">
                     <input
                       className="input"
                       type="text"
                       name="ticker"
                       placeholder="ex: AAPL"
-                      onChange={e => this.handleChange(e)}
+                      onChange={(e) => this.handleChange(e)}
                       value={this.state.input}
                       autoComplete="off"
                     />
-                    {this.renderSuggestions()}
+                    {this.state.suggestions ? this.renderSuggestions() : null}
                   </div>
                 </div>
 
@@ -312,18 +311,18 @@ class unconnectedStocks extends Component {
   }
 }
 
-const mapState = state => {
+const mapState = (state) => {
   return {
     balance: state.user.balance,
     userId: state.user.id,
     user: state.user,
     allSymbols: state.stock.symbols,
     transactions: state.transactions,
-    portfolio: state.portfolio
+    portfolio: state.portfolio,
   };
 };
 
-const mapDispatch = dispatch => {
+const mapDispatch = (dispatch) => {
   return {
     handleBuy(symbol, companyName, price, quantity) {
       dispatch(buy(symbol, companyName, price, quantity));
@@ -336,13 +335,10 @@ const mapDispatch = dispatch => {
     },
     getPortfolio(portfolio) {
       dispatch(getPortfolio(portfolio));
-    }
+    },
   };
 };
 
-const Stocks = connect(
-  mapState,
-  mapDispatch
-)(unconnectedStocks);
+const Stocks = connect(mapState, mapDispatch)(unconnectedStocks);
 
 export default Stocks;

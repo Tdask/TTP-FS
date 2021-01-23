@@ -9,7 +9,7 @@ import {
   decimalCleaner,
   performance,
   quantityChecker,
-  portfolioMaker
+  portfolioMaker,
 } from "../helpers";
 
 const IEXCLOUD_PUBLIC_KEY = "pk_0b13685b98974e5c9501efc15246a72d";
@@ -19,7 +19,7 @@ class unconnectedPortfolio extends Component {
     super(props);
     this.state = {
       portfolio: {},
-      totalValue: null
+      totalValue: null,
     };
     this.handleBatch = this.handleBatch.bind(this);
   }
@@ -94,7 +94,7 @@ class unconnectedPortfolio extends Component {
     this.setState({
       portfolio,
       batchQuotes: res.data,
-      totalValue: result
+      totalValue: result,
     });
     this.props.getTransactions();
   }
@@ -117,7 +117,7 @@ class unconnectedPortfolio extends Component {
               <h1 className="level-item title is-2">My Portfolio</h1>
               <div className="level-item box">
                 {Object.keys(this.state.portfolio).length === 0 ? (
-                  <h2 className="title is-3">waiting for stocks...</h2>
+                  <h2 className="title is-3">purchase some stock...</h2>
                 ) : (
                   <h2 className="title is-3 is-fixed">
                     Total Value: ${this.state.totalValue}
@@ -128,7 +128,7 @@ class unconnectedPortfolio extends Component {
               {batchQuotes ? (
                 <ul>
                   <div>
-                    {symbolArr.reverse().map(item => {
+                    {symbolArr.reverse().map((item) => {
                       return (
                         <div className="box card" key={item}>
                           <div
@@ -195,30 +195,27 @@ class unconnectedPortfolio extends Component {
   }
 }
 
-const mapState = state => {
+const mapState = (state) => {
   return {
     firstName: state.user.firstName,
     balance: state.user.balance,
     transactions: state.transactions,
     portfolio: state.portfolio,
-    allSymbols: state.stock.symbols
+    allSymbols: state.stock.symbols,
   };
 };
 
-const mapDispatch = dispatch => {
+const mapDispatch = (dispatch) => {
   return {
     getTransactions() {
       dispatch(userTransactions());
     },
     getSymbols() {
       dispatch(getSymbols());
-    }
+    },
   };
 };
 
-const Portfolio = connect(
-  mapState,
-  mapDispatch
-)(unconnectedPortfolio);
+const Portfolio = connect(mapState, mapDispatch)(unconnectedPortfolio);
 
 export default Portfolio;
