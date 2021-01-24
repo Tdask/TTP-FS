@@ -14,7 +14,6 @@ export const userTransactions = () => async (dispatch) => {
   try {
     res = await axios.get(`/api/stock/transactions`);
     dispatch(getTransactions(res.data));
-    console.log("res in userTransactions thunk", res);
   } catch (error) {
     console.log(error);
   }
