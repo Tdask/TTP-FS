@@ -1,6 +1,7 @@
 const webpack = require("webpack");
+const path = require("path");
 
-module.exports = env => {
+module.exports = (env) => {
   const envKeys = Object.keys(env).reduce((prev, next) => {
     prev[`process.env.${next}`] = JSON.stringify(env[next]);
     return prev;
@@ -9,15 +10,15 @@ module.exports = env => {
   return {
     entry: [
       "@babel/polyfill", // enables async-await
-      "./client/index.js"
+      "./client/index.js",
     ],
     mode: "development",
     output: {
-      path: __dirname,
-      filename: "./public/bundle.js"
+      path: path.join(__dirname, "./public"),
+      filename: "bundle.js",
     },
     resolve: {
-      extensions: [".js", ".jsx"]
+      extensions: [".js", ".jsx"],
     },
     devtool: "source-map",
     module: {
@@ -26,15 +27,15 @@ module.exports = env => {
           test: /\.jsx?$/,
           exclude: /node_modules/,
           use: {
-            loader: "babel-loader"
-          }
+            loader: "babel-loader",
+          },
         },
         {
           test: /\.css$/,
-          use: ["style-loader", "css-loader"]
-        }
-      ]
+          use: ["style-loader", "css-loader"],
+        },
+      ],
     },
-    plugins: [new webpack.DefinePlugin(envKeys)]
+    plugins: [new webpack.DefinePlugin(envKeys)],
   };
 };
