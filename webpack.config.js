@@ -12,7 +12,7 @@ module.exports = (env) => {
       "@babel/polyfill", // enables async-await
       "./client/index.js",
     ],
-    mode: "development",
+    mode: `${process.env.DATABASE_URL ? "production" : "development"}`,
     output: {
       path: __dirname,
       publicPath: "./public",
