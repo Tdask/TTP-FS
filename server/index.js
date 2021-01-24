@@ -11,7 +11,8 @@ const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 3000;
 // require("dotenv").config();
 const API_URL = "https://cloud.iexapis.com/";
-
+console.log("PORT", PORT);
+console.log("NODE ENV??", process.env.NODE_ENV);
 passport.serializeUser((user, done) => {
   try {
     done(null, user.id);
@@ -56,6 +57,7 @@ const createApp = () => {
 
   //static file serving middleware
   app.use(express.static(path.join(__dirname, "../public")));
+  // console.log("check yea", path.join(__dirname, "../public"));
 
   //any other requests with an extension (.js, .css) send 404
   app.use((req, res, next) => {
