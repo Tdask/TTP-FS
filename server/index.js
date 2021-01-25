@@ -59,17 +59,23 @@ const createApp = () => {
   app.use(express.static(path.join(__dirname, "../public")));
   // console.log("check yea", path.join(__dirname, "../public"));
 
-  //any other requests with an extension (.js, .css) send 404
-  // app.use((req, res, next) => {
-  //   if (path.extname(req.path).length) {
-  //     console.log("hitting conditional", path.extname(req.path), req.path);
-  //     const err = new Error("Not found");
-  //     err.status = 404;
-  //     next(err);
-  //   } else {
-  //     next();
-  //   }
-  // });
+  // any other requests with an extension (.js, .css) send 404
+  app.use((req, res, next) => {
+    console.log("req", req);
+    if (path.extname(req.path).length) {
+      console.log("hitting conditional", path.extname(req.path), req.path);
+      const err = new Error("Not found");
+      err.status = 404;
+      next(err);
+    } else {
+      next();
+    }
+  });
+
+  //serve up index.html
+  app.get("*", function (req, res) {
+    res.sendFile(path.join(__dirname, "../public/index.html"));
+  });
 
   //error handling endware
   app.use(function (err, req, res, next) {
@@ -78,11 +84,6 @@ const createApp = () => {
     res.status(err.status || 500).send(err.message || "Internal server error.");
   });
 };
-
-//serve up index.html
-app.get("*", function (req, res) {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
-});
 
 const startListening = () => {
   app.listen(PORT, () => {
