@@ -60,16 +60,16 @@ const createApp = () => {
   // console.log("check yea", path.join(__dirname, "../public"));
 
   //any other requests with an extension (.js, .css) send 404
-  app.use((req, res, next) => {
-    if (path.extname(req.path).length) {
-      console.log("hitting conditional", path.extname(req.path), req.path);
-      const err = new Error("Not found");
-      err.status = 404;
-      next(err);
-    } else {
-      next();
-    }
-  });
+  // app.use((req, res, next) => {
+  //   if (path.extname(req.path).length) {
+  //     console.log("hitting conditional", path.extname(req.path), req.path);
+  //     const err = new Error("Not found");
+  //     err.status = 404;
+  //     next(err);
+  //   } else {
+  //     next();
+  //   }
+  // });
 
   //serve up index.html
   app.get("*", function (req, res) {
