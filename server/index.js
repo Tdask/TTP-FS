@@ -71,11 +71,6 @@ const createApp = () => {
   //   }
   // });
 
-  //serve up index.html
-  app.get("*", function (req, res) {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
-  });
-
   //error handling endware
   app.use(function (err, req, res, next) {
     console.error(err);
@@ -83,6 +78,11 @@ const createApp = () => {
     res.status(err.status || 500).send(err.message || "Internal server error.");
   });
 };
+
+//serve up index.html
+app.get("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
 
 const startListening = () => {
   app.listen(PORT, () => {
