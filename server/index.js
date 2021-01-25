@@ -64,9 +64,13 @@ const createApp = () => {
     console.log("req", req);
     if (path.extname(req.path).length) {
       console.log("hitting conditional", path.extname(req.path), req.path);
-      const err = new Error("Not found");
-      err.status = 404;
-      next(err);
+      if (req.path === "/bundle.js") {
+        res.sendFile(path.join(__dirname, "../public/bundle.js"));
+      } else {
+        const err = new Error("Not found");
+        err.status = 404;
+        next(err);
+      }
     } else {
       next();
     }
@@ -74,6 +78,7 @@ const createApp = () => {
 
   //serve up index.html
   app.get("*", function (req, res) {
+    console.log("req in get all", req);
     res.sendFile(path.join(__dirname, "../public/index.html"));
   });
 
